@@ -4,10 +4,10 @@ using UnityEngine;
 
 public enum AXIS
 {
-    X,
-    Y,
-    Z,
-    NONE
+    X = 0,
+    Y = 1,
+    Z = 2,
+    NONE = 3
 }
 
 public class RubikGenerator : MonoBehaviour
@@ -1140,65 +1140,6 @@ public class RubikGenerator : MonoBehaviour
                 break;
         }
 
-
-
-        //switch (wantedFace)
-        //{
-        //    case RubikCubeFaces.CubeFace.Front:
-        //    case RubikCubeFaces.CubeFace.Back:
-        //        {
-        //            for (int i = 0; i < res.Count; i++)
-        //            {
-        //                for (int j = i; j < res.Count; j++)
-        //                {
-        //                    if (res[i].transform.position.x > res[j].transform.position.x)
-        //                    {
-        //                        var tmp = res[i];
-        //                        res[i] = res[j];
-        //                        res[j] = tmp;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        break;
-        //    case RubikCubeFaces.CubeFace.Right:
-        //    case RubikCubeFaces.CubeFace.Left:
-        //        {
-        //            for (int i = 0; i < res.Count; i++)
-        //            {
-        //                for (int j = i; j < res.Count; j++)
-        //                {
-        //                    if (res[i].transform.position.z > res[j].transform.position.z)
-        //                    {
-        //                        var tmp = res[i];
-        //                        res[i] = res[j];
-        //                        res[j] = tmp;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        break;
-        //    case RubikCubeFaces.CubeFace.Up:
-        //    case RubikCubeFaces.CubeFace.Down:
-        //        {
-        //            for (int i = 0; i < res.Count; i++)
-        //            {
-        //                for (int j = i; j < res.Count; j++)
-        //                {
-        //                    if (res[i].transform.position.x > res[j].transform.position.x)
-        //                    {
-        //                        var tmp = res[i];
-        //                        res[i] = res[j];
-        //                        res[j] = tmp;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        break;
-        //    default:
-        //        break;
-        //}
-
         return res;
     }
 
@@ -1241,5 +1182,10 @@ public class RubikGenerator : MonoBehaviour
                 i--;
             }
         }
+    }
+
+    public void SetSelectedCube(int x, int y, int z)
+    {
+        selecedCube = cubes[x][y][z];
     }
 }

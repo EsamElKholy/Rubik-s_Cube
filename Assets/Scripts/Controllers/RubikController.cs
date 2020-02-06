@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class RubikController : MonoBehaviour
 {
+    private struct RotationCommand
+    {
+        public int xIndex;
+        public int yIndex;
+        public int zIndex;
+
+        public AXIS axis;
+        public float direction;
+        public float angle;
+    }
+
     private AXIS currentAxis = AXIS.NONE;
     private bool rotationLocked;
+    public bool scrambling = false;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        Scramble();
     }
 
     // Update is called once per frame
@@ -19,7 +31,7 @@ public class RubikController : MonoBehaviour
         
     }
 
-    public void Rotate(AXIS axis, float angle, float direction)
+    public void Rotate(AXIS axis, float angle, float direction, float rotationTime = 0.5f)
     {
         if (!rotationLocked)
         {
@@ -27,7 +39,7 @@ public class RubikController : MonoBehaviour
 
             var slice = RubikGenerator.Instance.GetSlice(axis);
 
-            StartCoroutine(RotateSlice(slice, axis, angle, 0.5f, direction));        
+            StartCoroutine(RotateSlice(slice, axis, angle, rotationTime, direction));        
         }
     }
 
@@ -79,8 +91,56 @@ public class RubikController : MonoBehaviour
         currentAxis = axis;
     }
 
+    private RotationCommand GenerateRotationCommand()
+    {
+        RotationCommand rotationCommand = new RotationCommand();
+
+        rotationCommand.xIndex = Random.Range(0, RubikGenerator.Instance.size - 1);
+        rotationCommand.yIndex = Random.Range(0, RubikGenerator.Instance.size - 1);
+        rotationCommand.zIndex = Random.Range(0, RubikGenerator.Instance.size - 1);
+
+        rotationCommand.axis = (AXIS)Random.Range(0, 2);
+        rotationCommand.direction = Mathf.Clamp(Random.Range(-1, 1), -1, 1);
+        rotationCommand.angle = 90;
+
+        return rotationCommand;
+    }
+
+    public void Scramble()
+    {
+        if (!scrambling)
+        {
+            scrambling = true;
+            StartCoroutine(AutoRotate(3, 0.1f));
+        }
+    }
+
+    private IEnumerator AutoRotate(float time, float timeForEachRotation)
+    {
+        int numOfRotations = Mathf.CeilToInt(time / timeForEachRotation);
+
+        for (int i = 0; i < numOfRotations; i++)
+        {
+            var command = GenerateRotationCommand();
+            SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
+            Rotate(command.axis, command.angle, command.direction, timeForEachRotation);
+
+            while (rotationLocked)
+            {
+                yield return null;
+            }
+        }
+
+        scrambling = false;
+    }
+
     public void SetSelectedCube(GameObject cube)
     {
         RubikGenerator.Instance.selecedCube = cube;
+    }
+
+    public void SetSelectedCube(int x, int y, int z)
+    {
+        RubikGenerator.Instance.SetSelectedCube(x, y, z);
     }
 }

@@ -86,7 +86,10 @@ public class RubikGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //if (Input.GetKeyUp(KeyCode.D))
+        //{
+        //    Debug.Log(IsSolved());
+        //}
     }
 
     public void GenerateCube()
@@ -1182,6 +1185,113 @@ public class RubikGenerator : MonoBehaviour
                 i--;
             }
         }
+    }
+
+    public bool IsSolved()
+    {
+        var front = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();
+        var fc = front[0].GetComponent<Renderer>().material.color;
+        bool frontSolved = true;
+
+        var back = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
+        var bc = back[0].GetComponent<Renderer>().material.color;
+        bool backSolved = true;
+
+        var up = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
+        var uc = up[0].GetComponent<Renderer>().material.color;
+        bool upSolved = true;
+
+        var down = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
+        var dc = down[0].GetComponent<Renderer>().material.color;
+        bool downSolved = true;
+
+        var right = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
+        var rc = right[0].GetComponent<Renderer>().material.color;
+        bool rightSolved = true;
+
+        var left = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
+        var lc = left[0].GetComponent<Renderer>().material.color;
+        bool leftSolved = true;
+        
+        for (int i = 1; i < front.Length; i++)
+        {
+            if (!front[i].GetComponent<Renderer>().material.color.Equals(fc))
+            {
+                frontSolved = false;
+            }
+        }
+
+        if (!frontSolved)
+        {
+            return false;
+        }
+
+        for (int i = 1; i < back.Length; i++)
+        {
+            if (!back[i].GetComponent<Renderer>().material.color.Equals(bc))
+            {
+                backSolved = false;
+            }
+        }
+
+        if (!backSolved)
+        {
+            return false;
+        }
+
+        for (int i = 1; i < up.Length; i++)
+        {
+            if (!up[i].GetComponent<Renderer>().material.color.Equals(uc))
+            {
+                upSolved = false;
+            }
+        }
+
+        if (!upSolved)
+        {
+            return false;
+        }
+
+        for (int i = 1; i < down.Length; i++)
+        {
+            if (!down[i].GetComponent<Renderer>().material.color.Equals(dc))
+            {
+                downSolved = false;
+            }
+        }
+
+        if (!downSolved)
+        {
+            return false;
+        }
+
+        for (int i = 1; i < right.Length; i++)
+        {
+            if (!right[i].GetComponent<Renderer>().material.color.Equals(rc))
+            {
+                frontSolved = false;
+            }
+        }
+
+        if (!rightSolved)
+        {
+            return false;
+        }
+
+        for (int i = 1; i < left.Length; i++)
+        {
+            if (!left[i].GetComponent<Renderer>().material.color.Equals(lc))
+            {
+                leftSolved = false;
+            }
+        }
+
+        if (!leftSolved)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public void SetSelectedCube(int x, int y, int z)

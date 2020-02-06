@@ -22,7 +22,7 @@ public class RubikController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Scramble();
+        //Scramble();
     }
 
     // Update is called once per frame
@@ -111,7 +111,7 @@ public class RubikController : MonoBehaviour
         if (!scrambling)
         {
             scrambling = true;
-            StartCoroutine(AutoRotate(3, 0.1f));
+            StartCoroutine(AutoRotate(3, 0.3f));
         }
     }
 

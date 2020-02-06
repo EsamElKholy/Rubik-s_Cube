@@ -29,6 +29,10 @@ public class RubikPCInput : MonoBehaviour
     private bool cubeRotationMode = false;
     private bool cameraOrbitMode = false;
 
+    private float minZoom = 30;
+    private float maxZoom = 90;
+    private float zoomSpeed = 800;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +44,15 @@ public class RubikPCInput : MonoBehaviour
     {
         if (!rubikController.scrambling)
         {
+            float zoomValue = Input.GetAxis("Mouse ScrollWheel");
+
+            if (zoomValue != 0)
+            {
+                Camera.main.fieldOfView -= zoomValue * zoomSpeed * Time.deltaTime;
+
+                Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, minZoom, maxZoom);
+            }
+
             float x = 0;
             float y = 0;
 
@@ -120,9 +133,9 @@ public class RubikPCInput : MonoBehaviour
 
                 Vector2 d = new Vector2(Input.GetAxis("Mouse X") * 150, Input.GetAxis("Mouse Y") * 150);
                 d.y = ClampAngle(d.y, -360, 360);
-                Camera.main.transform.RotateAround(RubikGenerator.Instance.transform.position, Vector3.up, d.x * Time.deltaTime);
-                transform.RotateAround(RubikGenerator.Instance.transform.position, Camera.main.transform.right, d.y * Time.deltaTime);
-                Camera.main.transform.LookAt(RubikGenerator.Instance.transform, Camera.main.transform.up);
+                Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, d.x * Time.deltaTime);
+                transform.RotateAround(Vector3.zero, Camera.main.transform.right, d.y * Time.deltaTime);
+                Camera.main.transform.LookAt(Vector3.zero, Camera.main.transform.up);
                 old = (Input.mousePosition);
 
                 oldCamR = Camera.main.transform.rotation;

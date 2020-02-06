@@ -42,17 +42,17 @@ public class RubikController : MonoBehaviour
         {
             case AXIS.X:
                 {
-                    rotation = Quaternion.Euler(angle, 0, 0);
+                    rotation = Quaternion.Euler(angle, 0, 0) * oldRotation;
                 }
                 break;
             case AXIS.Y:
                 {
-                    rotation = Quaternion.Euler(0, angle, 0);
+                    rotation = Quaternion.Euler(0, angle, 0) * oldRotation;
                 }
                 break;
             case AXIS.Z:
                 {
-                    rotation = Quaternion.Euler(0, 0, angle);
+                    rotation = Quaternion.Euler(0, 0, angle) * oldRotation;
                 }
                 break;
             case AXIS.NONE:

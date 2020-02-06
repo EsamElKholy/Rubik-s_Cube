@@ -40,6 +40,7 @@ public class RubikGenerator : MonoBehaviour
 
     private List<List<List<GameObject>>> cubes = new List<List<List<GameObject>>>();
     private List<List<List<Vector3>>> cubesPositions = new List<List<List<Vector3>>>();
+    private List<List<List<Quaternion>>> cubesRotations= new List<List<List<Quaternion>>>();
     private List<GameObject> tiles = new List<GameObject>();
 
     private float currentAngle;
@@ -63,14 +64,17 @@ public class RubikGenerator : MonoBehaviour
         {
             cubes.Add(new List<List<GameObject>>());
             cubesPositions.Add(new List<List<Vector3>>());
+            cubesRotations.Add(new List<List<Quaternion>>());
             for (int j = 0; j < size; j++)
             {
                 cubes[i].Add(new List<GameObject>());
                 cubesPositions[i].Add(new List<Vector3>());
+                cubesRotations[i].Add(new List<Quaternion>());
                 for (int k = 0; k < size; k++)
                 {
                     cubes[i][j].Add(null);
                     cubesPositions[i][j].Add(Vector3.zero);
+                    cubesRotations[i][j].Add(Quaternion.identity);
                 }
             }
         }
@@ -291,12 +295,43 @@ public class RubikGenerator : MonoBehaviour
         }
     }
 
+    public void SaveRotation(GameObject cube, List<Quaternion> tr)
+    {
+        int x = int.Parse(cube.name[0].ToString()) - 1;
+        int y = int.Parse(cube.name[1].ToString()) - 1;
+        int z = int.Parse(cube.name[2].ToString()) - 1;
+
+        cubesRotations[x][y][z] = cube.transform.rotation;
+
+        for (int i = 0; i < cube.transform.childCount; i++)
+        {
+            tr.Add(cube.transform.GetChild(i).rotation);
+        }
+    }
+
+    public void RestoreRotation(GameObject cube, List<Quaternion> tr)
+    {
+        int x = int.Parse(cube.name[0].ToString()) - 1;
+        int y = int.Parse(cube.name[1].ToString()) - 1;
+        int z = int.Parse(cube.name[2].ToString()) - 1;
+
+        var rot = cubesRotations[x][y][z];
+
+        cube.transform.rotation = rot;
+
+        for (int i = 0; i < cube.transform.childCount; i++)
+        {
+            cube.transform.GetChild(i).rotation = tr[i];
+        }
+    }
+
     public void RotateTiles(AXIS axis, AXIS oldAxis, float direction)
     {
+        List<Quaternion> tileRotations = new List<Quaternion>();
         for (int j = 0; j < slice.transform.childCount; j++)
         {
             var cube = slice.transform.GetChild(j);
-
+           // SaveRotation(cube.gameObject, tileRotations);
             ResetPosition(cube.gameObject);
         }
 
@@ -552,7 +587,21 @@ public class RubikGenerator : MonoBehaviour
                 break;
             default:
                 break;
-        }  
+        }
+
+        //int index = 0;
+        //for (int j = 0; j < slice.transform.childCount; j++)
+        //{
+        //    var cube = slice.transform.GetChild(j);
+        //    List<Quaternion> tr = new List<Quaternion>();
+        //    for (int i = index; i < index + cube.childCount; i++)
+        //    {
+        //        tr.Add(tileRotations[i]);
+        //    }
+
+        //    index += cube.childCount;
+        //    RestoreRotation(cube.gameObject, tr);
+        //}
     }
 
     public List<GameObject> GetFaceTiles(RubikCubeFaces.CubeFace face, AXIS axis, float dir)

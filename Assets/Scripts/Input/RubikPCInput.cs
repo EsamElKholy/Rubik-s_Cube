@@ -26,6 +26,8 @@ public class RubikPCInput : MonoBehaviour
     private Quaternion oldCamR;
     private Vector3 oldCamP;
     private bool firstOrbit = true;
+    private bool cubeRotationMode = false;
+    private bool cameraOrbitMode = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +38,75 @@ public class RubikPCInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(1))
+        float x = 0;
+        float y = 0;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);            
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (cameraOrbitMode)
+                {
+                    Camera.main.transform.SetParent(transform);
+                    transform.rotation = Quaternion.identity;
+                    Camera.main.transform.SetParent(null);
+                }
+
+                cube = hit.collider.gameObject;
+
+                if (!dragging)
+                {
+                    firstSelectedCube = cube;
+                    firstHitPosition = hit.point;
+                    dragging = true;
+                }
+
+                lastHitPosition = hit.point;
+                lastSelectedCube = cube;
+
+                cubeRotationMode = true;
+                cameraOrbitMode = false;
+            }
+            else
+            {
+                cameraOrbitMode = true;
+                cubeRotationMode = false;
+
+                cube = null;
+                dragging = false;
+                lockDragging = false;
+
+                firstSelectedCube = null;
+                lastSelectedCube = null;
+            }
+        }
+
+        if (cubeRotationMode)
+        {          
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            x = Input.GetAxis("Mouse X");
+            y = Input.GetAxis("Mouse Y");
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                cube = hit.collider.gameObject;
+
+                if (!dragging)
+                {
+                    firstSelectedCube = cube;
+                    firstHitPosition = hit.point;
+                    dragging = true;
+                }
+
+                lastHitPosition = hit.point;
+                lastSelectedCube = cube;
+            }
+        }
+
+        if (cameraOrbitMode)
         {
             if (!firstOrbit)
             {
@@ -60,305 +130,263 @@ public class RubikPCInput : MonoBehaviour
             firstOrbit = false;
         }
 
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            Camera.main.transform.SetParent(transform);
-            transform.rotation = Quaternion.identity;
-            Camera.main.transform.SetParent(null);
-        }
-
-        float x = 0;
-        float y = 0;
-
-        if (Input.GetMouseButton(0))
-        {          
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            x = Input.GetAxis("Mouse X");
-            y = Input.GetAxis("Mouse Y");
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                cube = hit.collider.gameObject;
-
-                if (!dragging)
-                {
-                    firstSelectedCube = cube;
-                    firstHitPosition = hit.point;
-                    dragging = true;
-                }
-
-                lastHitPosition = hit.point;
-                lastSelectedCube = cube;
-            }
-        }
-
         if (Input.GetMouseButtonUp(0))
         {
-            if (firstSelectedCube && !firstHitPosition.Equals(lastHitPosition) && !lockDragging)
+            if (cubeRotationMode)
             {
-                lockDragging = true;
-
-                float minScale1 = Mathf.Min(
-                    firstSelectedCube.transform.localScale.x, Mathf.Min(
-                        firstSelectedCube.transform.localScale.y, 
-                        firstSelectedCube.transform.localScale.z));
-
-                float minScale2 = Mathf.Min(
-                    lastSelectedCube.transform.localScale.x, Mathf.Min(
-                        lastSelectedCube.transform.localScale.y,
-                        lastSelectedCube.transform.localScale.z));
-
-                bool xy1 = false, xz1 = false, yz1 = false;
-                bool xy2 = false, xz2 = false, yz2 = false;
-
-                AXIS axis = AXIS.NONE;
-
-                if (minScale1 == firstSelectedCube.transform.localScale.x)
+                if (firstSelectedCube && !firstHitPosition.Equals(lastHitPosition) && !lockDragging)
                 {
-                    yz1 = true;
-                }
-                else if (minScale1 == firstSelectedCube.transform.localScale.y)
-                {
-                    xz1 = true;
-                }
-                else if (minScale1 == firstSelectedCube.transform.localScale.z)
-                {
-                    xy1 = true;
-                }
+                    lockDragging = true;
 
-                if (minScale2 == lastSelectedCube.transform.localScale.x)
-                {
-                    yz2 = true;
-                }
-                else if (minScale2 == lastSelectedCube.transform.localScale.y)
-                {
-                    xz2 = true;
-                }
-                else if (minScale2 == lastSelectedCube.transform.localScale.z)
-                {
-                    xy2 = true;
-                }
+                    float minScale1 = Mathf.Min(
+                        firstSelectedCube.transform.localScale.x, Mathf.Min(
+                            firstSelectedCube.transform.localScale.y,
+                            firstSelectedCube.transform.localScale.z));                    
 
-                float direction = 1;
+                    bool xy1 = false, xz1 = false, yz1 = false;
 
-                var dir = (lastHitPosition - firstHitPosition).normalized;
+                    AXIS axis = AXIS.NONE;
 
-                if (xy1)
-                {
-                    float ax = Mathf.Abs(dir.x);
-                    float ay = Mathf.Abs(dir.y);
-                    float az = Mathf.Abs(dir.z);
-
-                    float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
-
-                    if (maxElement == ax)
+                    if (minScale1 == firstSelectedCube.transform.localScale.x)
                     {
-                        var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+                        yz1 = true;
+                    }
+                    else if (minScale1 == firstSelectedCube.transform.localScale.y)
+                    {
+                        xz1 = true;
+                    }
+                    else if (minScale1 == firstSelectedCube.transform.localScale.z)
+                    {
+                        xy1 = true;
+                    }                   
 
-                        axis = AXIS.Y;
+                    float direction = 1;
 
-                        if (Vector3.Dot(dir, Vector3.right) >= 0)
+                    var dir = (lastHitPosition - firstHitPosition).normalized;
+
+                    if (xy1)
+                    {
+                        float ax = Mathf.Abs(dir.x);
+                        float ay = Mathf.Abs(dir.y);
+                        float az = Mathf.Abs(dir.z);
+
+                        float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
+
+                        if (maxElement == ax)
                         {
-                            if (marker1)
+                            var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+
+                            axis = AXIS.Y;
+
+                            if (Vector3.Dot(dir, Vector3.right) >= 0)
                             {
-                                direction = -1;
+                                if (marker1)
+                                {
+                                    direction = -1;
+                                }
+                                else
+                                {
+                                    direction = 1;
+                                }
                             }
                             else
                             {
-                                direction = 1;
+                                if (marker1)
+                                {
+                                    direction = 1;
+                                }
+                                else
+                                {
+                                    direction = -1;
+                                }
                             }
                         }
-                        else
+                        else if (maxElement == ay)
                         {
-                            if (marker1)
+                            var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+
+                            axis = AXIS.X;
+
+                            if (Vector3.Dot(Vector3.up, dir) >= 0)
                             {
-                                direction = 1;
+                                if (marker1)
+                                {
+                                    direction = 1;
+                                }
+                                else
+                                {
+                                    direction = -1;
+                                }
                             }
                             else
                             {
-                                direction = -1;
+                                if (marker1)
+                                {
+                                    direction = -1;
+                                }
+                                else
+                                {
+                                    direction = 1;
+                                }
                             }
                         }
                     }
-                    else if (maxElement == ay)
+                    else if (xz1)
                     {
-                        var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+                        float ax = Mathf.Abs(dir.x);
+                        float ay = Mathf.Abs(dir.y);
+                        float az = Mathf.Abs(dir.z);
 
-                        axis = AXIS.X;
+                        float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
 
-                        if (Vector3.Dot(Vector3.up, dir) >= 0)
+                        if (maxElement == ax)
                         {
-                            if (marker1)
+                            var marker1 = firstSelectedCube.GetComponent<MarkAsUpFace>();
+
+                            axis = AXIS.Z;
+
+                            if (Vector3.Dot(dir, Vector3.right) >= 0)
                             {
-                                direction = 1;
+                                if (marker1)
+                                {
+                                    direction = -1;
+                                }
+                                else
+                                {
+                                    direction = 1;
+                                }
                             }
                             else
                             {
-                                direction = -1;
+                                if (marker1)
+                                {
+                                    direction = 1;
+                                }
+                                else
+                                {
+                                    direction = -1;
+                                }
                             }
                         }
-                        else
+                        else if (maxElement == az)
                         {
-                            if (marker1)
+                            var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+
+                            axis = AXIS.X;
+
+                            if (Vector3.Dot(dir, Vector3.forward) > 0)
                             {
-                                direction = -1;
+                                if (marker1)
+                                {
+                                    direction = -1;
+                                }
+                                else
+                                {
+                                    direction = 1;
+                                }
                             }
                             else
                             {
-                                direction = 1;
+                                if (marker1)
+                                {
+                                    direction = 1;
+                                }
+                                else
+                                {
+                                    direction = -1;
+                                }
                             }
                         }
                     }
+                    else if (yz1)
+                    {
+                        float ax = Mathf.Abs(dir.x);
+                        float ay = Mathf.Abs(dir.y);
+                        float az = Mathf.Abs(dir.z);
+
+                        float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
+
+                        if (maxElement == az)
+                        {
+                            var marker1 = firstSelectedCube.GetComponent<MarkAsRightFace>();
+
+                            axis = AXIS.Y;
+
+                            if (Vector3.Dot(dir, Vector3.back) >= 0)
+                            {
+                                if (marker1)
+                                {
+                                    direction = 1;
+                                }
+                                else
+                                {
+                                    direction = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (marker1)
+                                {
+                                    direction = -1;
+                                }
+                                else
+                                {
+                                    direction = 1;
+                                }
+                            }
+                        }
+                        else if (maxElement == ay)
+                        {
+                            var marker1 = firstSelectedCube.GetComponent<MarkAsRightFace>();
+
+                            axis = AXIS.Z;
+
+                            if (Vector3.Dot(dir, Vector3.up) > 0)
+                            {
+                                if (marker1)
+                                {
+                                    direction = 1;
+                                }
+                                else
+                                {
+                                    direction = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (marker1)
+                                {
+                                    direction = -1;
+
+                                }
+                                else
+                                {
+                                    direction = 1;
+                                }
+                            }
+                        }
+                    }
+
+                    rubikController.SetSelectedCube(firstSelectedCube.transform.parent.parent.gameObject);
+
+                    rubikController.Rotate(axis, direction * 90, direction);
                 }
-                else if (xz1)
-                {
-                    float ax = Mathf.Abs(dir.x);
-                    float ay = Mathf.Abs(dir.y);
-                    float az = Mathf.Abs(dir.z);
-
-                    float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
-
-                    if (maxElement == ax)
-                    {
-                        var marker1 = firstSelectedCube.GetComponent<MarkAsUpFace>();
-
-                        axis = AXIS.Z;
-
-                        if (Vector3.Dot(dir, Vector3.right) >= 0)
-                        {
-                            if (marker1)
-                            {
-                                direction = -1;
-                            }
-                            else 
-                            {
-                                direction = 1;
-                            }
-                        }
-                        else
-                        {
-                            if (marker1)
-                            {
-                                direction = 1;
-                            }
-                            else 
-                            {
-                                direction = -1;
-                            }
-                        }
-                    }
-                    else if (maxElement == az)
-                    {
-                        var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
-
-                        axis = AXIS.X;
-
-                        if (Vector3.Dot(dir, Vector3.forward) > 0)
-                        {
-                            if (marker1)
-                            {
-                                direction = -1;
-                            }
-                            else
-                            {
-                                direction = 1;
-                            }
-                        }
-                        else
-                        {
-                            if (marker1)
-                            {
-                                direction = 1;
-                            }
-                            else
-                            {
-                                direction = -1;
-                            }
-                        }
-                    }
-                }
-                else if (yz1)
-                {
-                    float ax = Mathf.Abs(dir.x);
-                    float ay = Mathf.Abs(dir.y);
-                    float az = Mathf.Abs(dir.z);
-
-                    float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));                    
-
-                    if (maxElement == az)
-                    {
-                        var marker1 = firstSelectedCube.GetComponent<MarkAsRightFace>();
-
-                        axis = AXIS.Y;
-
-                        if (Vector3.Dot(dir, Vector3.back) >= 0)
-                        {
-                            if (marker1)
-                            {
-                                direction = 1;
-                            }
-                            else 
-                            {
-                                direction = -1;
-                            }
-                        }
-                        else
-                        {
-                            if (marker1)
-                            {
-                                direction = -1;
-                            }
-                            else 
-                            {
-                                direction = 1;
-                            }
-                        }
-                    }
-                    else if (maxElement == ay)
-                    {
-                        var marker1 = firstSelectedCube.GetComponent<MarkAsRightFace>();
-
-                        axis = AXIS.Z;
-
-                        if (Vector3.Dot(dir, Vector3.up) > 0)
-                        {
-                            if (marker1)
-                            {
-                                direction = 1;
-                            }
-                            else 
-                            {
-                                direction = -1;
-                            }
-                        }
-                        else
-                        {
-                            if (marker1)
-                            {
-                                direction = -1;
-
-                            }
-                            else 
-                            {
-                                direction = 1;
-                            }
-                        }
-                    }
-                }
-
-                rubikController.SetSelectedCube(firstSelectedCube.transform.parent.parent.gameObject);
-
-                rubikController.Rotate(axis, direction * 90, direction);
             }
-
+            if (cameraOrbitMode)
+            {
+                Camera.main.transform.SetParent(transform);
+                transform.rotation = Quaternion.identity;
+                Camera.main.transform.SetParent(null);
+            }
             cube = null;
             dragging = false;
             lockDragging = false;
 
             firstSelectedCube = null;
             lastSelectedCube = null;
+
+            cameraOrbitMode = false;
+            cubeRotationMode = false;
         }
     }
 

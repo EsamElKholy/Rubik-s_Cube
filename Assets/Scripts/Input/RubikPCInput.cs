@@ -152,15 +152,16 @@ public class RubikPCInput : MonoBehaviour
                     float az = Mathf.Abs(dir.z);
 
                     float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
-                    var marker = firstSelectedCube.GetComponent<MarkAsFrontFace>();
 
                     if (maxElement == ax)
                     {
+                        var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+
                         axis = AXIS.Y;
 
                         if (Vector3.Dot(dir, Vector3.right) >= 0)
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
                                 direction = -1;
                             }
@@ -171,7 +172,7 @@ public class RubikPCInput : MonoBehaviour
                         }
                         else
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
                                 direction = 1;
                             }
@@ -183,11 +184,13 @@ public class RubikPCInput : MonoBehaviour
                     }
                     else if (maxElement == ay)
                     {
+                        var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+
                         axis = AXIS.X;
 
                         if (Vector3.Dot(Vector3.up, dir) >= 0)
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
                                 direction = 1;
                             }
@@ -198,7 +201,7 @@ public class RubikPCInput : MonoBehaviour
                         }
                         else
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
                                 direction = -1;
                             }
@@ -216,30 +219,31 @@ public class RubikPCInput : MonoBehaviour
                     float az = Mathf.Abs(dir.z);
 
                     float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
-                    var marker = firstSelectedCube.GetComponent<MarkAsUpFace>();
 
                     if (maxElement == ax)
                     {
+                        var marker1 = firstSelectedCube.GetComponent<MarkAsUpFace>();
+
                         axis = AXIS.Z;
 
                         if (Vector3.Dot(dir, Vector3.right) >= 0)
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
                                 direction = -1;
                             }
-                            else
+                            else 
                             {
                                 direction = 1;
                             }
                         }
                         else
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
                                 direction = 1;
                             }
-                            else
+                            else 
                             {
                                 direction = -1;
                             }
@@ -247,28 +251,30 @@ public class RubikPCInput : MonoBehaviour
                     }
                     else if (maxElement == az)
                     {
+                        var marker1 = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+
                         axis = AXIS.X;
 
                         if (Vector3.Dot(dir, Vector3.forward) > 0)
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
-                                direction = 1;
+                                direction = -1;
                             }
                             else
                             {
-                                direction = -1;
+                                direction = 1;
                             }
                         }
                         else
                         {
-                            if (marker || xy2 || yz2)
+                            if (marker1)
                             {
-                                direction = -1;
+                                direction = 1;
                             }
                             else
                             {
-                                direction = 1;
+                                direction = -1;
                             }
                         }
                     }
@@ -279,31 +285,32 @@ public class RubikPCInput : MonoBehaviour
                     float ay = Mathf.Abs(dir.y);
                     float az = Mathf.Abs(dir.z);
 
-                    float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));
-                    var marker = lastSelectedCube.GetComponent<MarkAsRightFace>();
+                    float maxElement = Mathf.Max(ax, Mathf.Max(ay, az));                    
 
                     if (maxElement == az)
                     {
+                        var marker1 = firstSelectedCube.GetComponent<MarkAsRightFace>();
+
                         axis = AXIS.Y;
 
                         if (Vector3.Dot(dir, Vector3.back) >= 0)
                         {
-                            if (marker || xy2 || xz2)
+                            if (marker1)
                             {
                                 direction = 1;
                             }
-                            else
+                            else 
                             {
                                 direction = -1;
                             }
                         }
                         else
                         {
-                            if (marker || xy2 || xz2)
+                            if (marker1)
                             {
                                 direction = -1;
                             }
-                            else
+                            else 
                             {
                                 direction = 1;
                             }
@@ -311,26 +318,29 @@ public class RubikPCInput : MonoBehaviour
                     }
                     else if (maxElement == ay)
                     {
+                        var marker1 = firstSelectedCube.GetComponent<MarkAsRightFace>();
+
                         axis = AXIS.Z;
 
-                        if (Vector3.Dot(dir, Vector3.up) >= 0)
+                        if (Vector3.Dot(dir, Vector3.up) > 0)
                         {
-                            if (marker || xy2 || xz2)
+                            if (marker1)
                             {
                                 direction = 1;
                             }
-                            else
+                            else 
                             {
                                 direction = -1;
                             }
                         }
                         else
                         {
-                            if (marker || xy2 || xz2)
+                            if (marker1)
                             {
                                 direction = -1;
+
                             }
-                            else
+                            else 
                             {
                                 direction = 1;
                             }

@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public PlayerData playerData;
     public GlobalGameState globalGameState;
 
-    private void Awake()
+    private void OnEnable()
     {
         if (Instance == null)
         {

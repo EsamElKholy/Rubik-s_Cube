@@ -86,14 +86,24 @@ public class RubikGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyUp(KeyCode.D))
-        //{
-        //    Debug.Log(IsSolved());
-        //}
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            RecordColors(GameManager.Instance.playerData);
+        }
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            SetColors(GameManager.Instance.playerData);
+        }
     }
 
     public void GenerateCube()
-    {   
+    {
+        if (GameManager.Instance.playerData)
+        {
+            GameManager.Instance.playerData.cubeSize = size;
+        }
+
         numOfCubes = size * size * size;
         numOfTiles = numOfCubes;
 
@@ -298,43 +308,12 @@ public class RubikGenerator : MonoBehaviour
         }
     }
 
-    public void SaveRotation(GameObject cube, List<Quaternion> tr)
-    {
-        int x = int.Parse(cube.name[0].ToString()) - 1;
-        int y = int.Parse(cube.name[1].ToString()) - 1;
-        int z = int.Parse(cube.name[2].ToString()) - 1;
-
-        cubesRotations[x][y][z] = cube.transform.rotation;
-
-        for (int i = 0; i < cube.transform.childCount; i++)
-        {
-            tr.Add(cube.transform.GetChild(i).rotation);
-        }
-    }
-
-    public void RestoreRotation(GameObject cube, List<Quaternion> tr)
-    {
-        int x = int.Parse(cube.name[0].ToString()) - 1;
-        int y = int.Parse(cube.name[1].ToString()) - 1;
-        int z = int.Parse(cube.name[2].ToString()) - 1;
-
-        var rot = cubesRotations[x][y][z];
-
-        cube.transform.rotation = rot;
-
-        for (int i = 0; i < cube.transform.childCount; i++)
-        {
-            cube.transform.GetChild(i).rotation = tr[i];
-        }
-    }
-
     public void RotateTiles(AXIS axis, AXIS oldAxis, float direction)
     {
         List<Quaternion> tileRotations = new List<Quaternion>();
         for (int j = 0; j < slice.transform.childCount; j++)
         {
             var cube = slice.transform.GetChild(j);
-           // SaveRotation(cube.gameObject, tileRotations);
             ResetPosition(cube.gameObject);
         }
 
@@ -591,20 +570,6 @@ public class RubikGenerator : MonoBehaviour
             default:
                 break;
         }
-
-        //int index = 0;
-        //for (int j = 0; j < slice.transform.childCount; j++)
-        //{
-        //    var cube = slice.transform.GetChild(j);
-        //    List<Quaternion> tr = new List<Quaternion>();
-        //    for (int i = index; i < index + cube.childCount; i++)
-        //    {
-        //        tr.Add(tileRotations[i]);
-        //    }
-
-        //    index += cube.childCount;
-        //    RestoreRotation(cube.gameObject, tr);
-        //}
     }
 
     public List<GameObject> GetFaceTiles(RubikCubeFaces.CubeFace face, AXIS axis, float dir)
@@ -1292,6 +1257,129 @@ public class RubikGenerator : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void RecordColors(PlayerData playerData)
+    {
+        if (playerData)
+        {
+            if (playerData.currentColors.frontFaceColors.Count == 0 || playerData.currentColors.frontFaceColors.Count > size * size)
+            {
+                playerData.currentColors.frontFaceColors = new List<Color>();
+                playerData.currentColors.backFaceColors = new List<Color>();
+                playerData.currentColors.upFaceColors = new List<Color>();
+                playerData.currentColors.downFaceColors = new List<Color>();
+                playerData.currentColors.rightFaceColors = new List<Color>();
+                playerData.currentColors.leftFaceColors = new List<Color>();
+
+                for (int i = 0; i < size * size; i++)
+                {
+                    playerData.currentColors.frontFaceColors.Add(Color.clear);
+                    playerData.currentColors.backFaceColors.Add(Color.clear);
+                    playerData.currentColors.upFaceColors.Add(Color.clear);
+                    playerData.currentColors.downFaceColors.Add(Color.clear);
+                    playerData.currentColors.rightFaceColors.Add(Color.clear);
+                    playerData.currentColors.leftFaceColors.Add(Color.clear);
+                }
+            }
+
+            var front = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                playerData.currentColors.frontFaceColors[j] = front[j].GetComponent<Renderer>().material.color;
+            }
+
+            var back = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                playerData.currentColors.backFaceColors[j] = back[j].GetComponent<Renderer>().material.color;
+            }
+
+            var up = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                playerData.currentColors.upFaceColors[j] = up[j].GetComponent<Renderer>().material.color;
+            }
+
+            var down = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                playerData.currentColors.downFaceColors[j] = down[j].GetComponent<Renderer>().material.color;
+            }
+
+            var right = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                playerData.currentColors.rightFaceColors[j] = right[j].GetComponent<Renderer>().material.color;
+            }
+
+            var left = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                playerData.currentColors.leftFaceColors[j] = left[j].GetComponent<Renderer>().material.color;
+            }
+        }
+    }
+
+    public void SetColors(PlayerData playerData)
+    {
+        if (playerData)
+        {
+            if (playerData.currentColors.frontFaceColors.Count == 0 || playerData.currentColors.frontFaceColors.Count > size * size)
+            {
+                RecordColors(playerData);
+
+                return;
+            }
+
+            var front = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                front[j].GetComponent<Renderer>().material.color = playerData.currentColors.frontFaceColors[j];
+            }
+
+            var back = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                back[j].GetComponent<Renderer>().material.color = playerData.currentColors.backFaceColors[j];
+            }
+
+            var up = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                up[j].GetComponent<Renderer>().material.color = playerData.currentColors.upFaceColors[j];
+            }
+
+            var down = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                down[j].GetComponent<Renderer>().material.color = playerData.currentColors.downFaceColors[j];
+            }
+
+            var right = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                right[j].GetComponent<Renderer>().material.color = playerData.currentColors.rightFaceColors[j];
+            }
+
+            var left = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
+
+            for (int j = 0; j < size * size; j++)
+            {
+                left[j].GetComponent<Renderer>().material.color = playerData.currentColors.leftFaceColors[j];
+            }
+        }
     }
 
     public void SetSelectedCube(int x, int y, int z)

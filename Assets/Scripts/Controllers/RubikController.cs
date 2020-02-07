@@ -2,23 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RubikController : MonoBehaviour
+public struct RotationCommand
 {
-    private struct RotationCommand
+    public enum CommandType
     {
-        public int xIndex;
-        public int yIndex;
-        public int zIndex;
-
-        public AXIS axis;
-        public float direction;
-        public float angle;
+        Auto,
+        Manual
     }
 
+    public CommandType commandType;
+
+    public int xIndex;
+    public int yIndex;
+    public int zIndex;
+
+    public AXIS axis;
+    public float direction;
+    public float angle;
+}
+
+public class RubikController : MonoBehaviour
+{   
     private AXIS currentAxis = AXIS.NONE;
     private bool rotationLocked;
+    [HideInInspector]
     public bool scrambling = false;
-    
+
+    private Stack<RotationCommand> rotationCommands = new Stack<RotationCommand>();
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,13 +40,29 @@ public class RubikController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+       
     }
 
-    public void Rotate(AXIS axis, float angle, float direction, float rotationTime = 0.5f)
+    public void Rotate(AXIS axis, float angle, float direction, RotationCommand.CommandType rotationType, float rotationTime = 0.5f)
     {
         if (!rotationLocked)
         {
+            RotationCommand command = new RotationCommand();
+
+            command.xIndex = int.Parse(RubikGenerator.Instance.selecedCube.name[0].ToString()) - 1;
+            command.yIndex = int.Parse(RubikGenerator.Instance.selecedCube.name[1].ToString()) - 1;
+            command.zIndex = int.Parse(RubikGenerator.Instance.selecedCube.name[2].ToString()) - 1;
+
+            command.direction = -direction;
+            command.angle = -angle;
+            command.axis = axis;
+            command.commandType = rotationType;
+
+            if (rotationType == RotationCommand.CommandType.Manual)
+            {
+                rotationCommands.Push(command);
+            }
+
             rotationLocked = true;
 
             var slice = RubikGenerator.Instance.GetSlice(axis);
@@ -123,7 +151,7 @@ public class RubikController : MonoBehaviour
         {
             var command = GenerateRotationCommand();
             SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
-            Rotate(command.axis, command.angle, command.direction, timeForEachRotation);
+            Rotate(command.axis, command.angle, command.direction, RotationCommand.CommandType.Auto, timeForEachRotation);
 
             while (rotationLocked)
             {
@@ -132,6 +160,17 @@ public class RubikController : MonoBehaviour
         }
 
         scrambling = false;
+    }
+
+    public void UndoRotation()
+    {
+        if (rotationCommands.Count > 0)
+        {
+            var command = rotationCommands.Pop();
+
+            SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
+            Rotate(command.axis, command.angle, command.direction, RotationCommand.CommandType.Auto);
+        }
     }
 
     public void SetSelectedCube(GameObject cube)

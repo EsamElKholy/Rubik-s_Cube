@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class RubikCubeFaces
+public struct RubikCubeFaces
 {
     public enum CubeFace
     {
@@ -18,6 +18,17 @@ public class RubikCubeFaces
 
     public CubeFace Face;
     public Color Color;
+}
+
+[System.Serializable]
+public class RubikCubeFaceColors
+{
+    public List<Color> frontFaceColors = new List<Color>();
+    public List<Color> backFaceColors = new List<Color>();
+    public List<Color> upFaceColors = new List<Color>();
+    public List<Color> downFaceColors = new List<Color>();
+    public List<Color> rightFaceColors = new List<Color>();
+    public List<Color> leftFaceColors = new List<Color>();
 }
 
 [CreateAssetMenu(fileName = "New Rubik Cube Preset", menuName = "Rubik Cube/Rubik Cube Preset", order = 0)]

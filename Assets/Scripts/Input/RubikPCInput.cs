@@ -19,13 +19,13 @@ public class RubikPCInput : MonoBehaviour
     private bool dragging = false;
     private bool lockDragging = false;
 
-    private Vector3 old;
-
     private Quaternion oldCubeR;
     private Vector3 oldCubeP;
     private Quaternion oldCamR;
     private Vector3 oldCamP;
+
     private bool firstOrbit = true;
+
     private bool cubeRotationMode = false;
     private bool cameraOrbitMode = false;
 
@@ -136,7 +136,6 @@ public class RubikPCInput : MonoBehaviour
                 Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, d.x * Time.deltaTime);
                 transform.RotateAround(Vector3.zero, Camera.main.transform.right, d.y * Time.deltaTime);
                 Camera.main.transform.LookAt(Vector3.zero, Camera.main.transform.up);
-                old = (Input.mousePosition);
 
                 oldCamR = Camera.main.transform.rotation;
                 oldCamP = Camera.main.transform.position;
@@ -384,7 +383,7 @@ public class RubikPCInput : MonoBehaviour
 
                         rubikController.SetSelectedCube(firstSelectedCube.transform.parent.parent.gameObject);
 
-                        rubikController.Rotate(axis, direction * 90, direction);
+                        rubikController.Rotate(axis, direction * 90, direction, RotationCommand.CommandType.Manual);
                     }
                 }
                 if (cameraOrbitMode)
@@ -406,7 +405,7 @@ public class RubikPCInput : MonoBehaviour
         }
     }
 
-    private static float ClampAngle(float angle, float min, float max)
+    private float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
             angle += 360;

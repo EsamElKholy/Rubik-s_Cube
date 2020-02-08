@@ -427,7 +427,7 @@ public class RubikInput : MonoBehaviour
         camera.transform.parent.rotation = Quaternion.Slerp(camera.transform.parent.rotation, currentRotation, 5);
         currentRotation1 = Quaternion.AngleAxis(delta.y * Time.deltaTime, camera.transform.right) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, currentRotation1, 5);
-        camera.transform.parent.LookAt(Vector3.zero, camera.transform.up);
+        camera.transform.LookAt(Vector3.zero, camera.transform.up);
 
         oldCamR = camera.transform.parent.rotation;
         oldCamP = camera.transform.parent.position;

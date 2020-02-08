@@ -46,6 +46,10 @@ public class PlayerData : ScriptableObject
     public int cubeSize = 2;
     [HideInInspector]
     public RubikCubeFaceColors currentColors = new RubikCubeFaceColors();
+    [HideInInspector]
+    public Vector3 initialCamPos;
+    [HideInInspector]
+    public Vector3 initialCamRot;
 
     public void IncreamentTime(float dt)
     {
@@ -88,7 +92,7 @@ public class PlayerData : ScriptableObject
 
     public bool CanContinue()
     {
-        if (time.seconds > 2)
+        if (time.seconds > 2 && currentColors.frontFaceColors.Count > 0)
         {
             return true;
         }

@@ -42,12 +42,12 @@ public class RubikGenerator : MonoBehaviour
     private List<List<List<Vector3>>> cubesPositions = new List<List<List<Vector3>>>();
     private List<GameObject> tiles = new List<GameObject>();
 
-    private MarkAsFrontFace[] frontFaceCach = new MarkAsFrontFace[1];
-    private MarkAsBackFace[] backFaceCach = new MarkAsBackFace[1];
-    private MarkAsUpFace[] upFaceCach = new MarkAsUpFace[1];
-    private MarkAsDownFace[] downFaceCach = new MarkAsDownFace[1];
-    private MarkAsRightFace[] rightFaceCach = new MarkAsRightFace[1];
-    private MarkAsLeftFace[] leftFaceCach = new MarkAsLeftFace[1];
+    private MarkAsFrontFace[] frontFaceCache = new MarkAsFrontFace[1];
+    private MarkAsBackFace[] backFaceCache = new MarkAsBackFace[1];
+    private MarkAsUpFace[] upFaceCache = new MarkAsUpFace[1];
+    private MarkAsDownFace[] downFaceCache = new MarkAsDownFace[1];
+    private MarkAsRightFace[] rightFaceCache = new MarkAsRightFace[1];
+    private MarkAsLeftFace[] leftFaceCache = new MarkAsLeftFace[1];
 
     private float currentAngle;
 
@@ -157,12 +157,12 @@ public class RubikGenerator : MonoBehaviour
 
         GenerateTiles();
 
-        frontFaceCach = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();
-        backFaceCach = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
-        upFaceCach = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
-        downFaceCach = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
-        rightFaceCach = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
-        leftFaceCach = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
+        frontFaceCache = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();
+        backFaceCache = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
+        upFaceCache = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
+        downFaceCache = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
+        rightFaceCache = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
+        leftFaceCache = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
     }
 
     public void GenerateCube(int size)
@@ -187,9 +187,9 @@ public class RubikGenerator : MonoBehaviour
                 tileBody.transform.localScale = new Vector3(scale, scale, 0.1f);
                 tileBody.transform.localPosition = new Vector3(0, 0, 0.5f);
                 tileBody.transform.name = cubes[i][j][0].name;
-                Material material = new Material(tileBody.GetComponent<Renderer>().sharedMaterial);
+                Material material = new Material(tileBody.GetComponent<Renderer>().material);
                 material.color = cubePreset.BackFace.Color;
-                tileBody.GetComponent<Renderer>().sharedMaterial = material;
+                tileBody.GetComponent<Renderer>().material = material;
                 tileBody.gameObject.AddComponent<MarkAsBackFace>();
 
                 var tile1 = Instantiate<GameObject>(tilePrefab, Vector3.zero, Quaternion.identity);
@@ -201,9 +201,9 @@ public class RubikGenerator : MonoBehaviour
                 tileBody1.transform.localScale = new Vector3(scale, scale, 0.1f);
                 tileBody1.transform.localPosition = new Vector3(0, 0, -0.5f);
                 tileBody1.transform.name = cubes[i][j][size - 1].name;
-                material = new Material(tileBody1.GetComponent<Renderer>().sharedMaterial);
+                material = new Material(tileBody1.GetComponent<Renderer>().material);
                 material.color = cubePreset.FrontFace.Color;
-                tileBody1.GetComponent<Renderer>().sharedMaterial = material;
+                tileBody1.GetComponent<Renderer>().material = material;
                 tileBody1.gameObject.AddComponent<MarkAsFrontFace>();
             }
         }
@@ -220,9 +220,9 @@ public class RubikGenerator : MonoBehaviour
                 tileBody.transform.localScale = new Vector3(0.1f, scale, scale);
                 tileBody.transform.localPosition = new Vector3(-0.5f, 0, 0);
                 tileBody.transform.name = cubes[0][i][j].name;
-                Material material = new Material(tileBody.GetComponent<Renderer>().sharedMaterial);
+                Material material = new Material(tileBody.GetComponent<Renderer>().material);
                 material.color = cubePreset.LeftFace.Color;
-                tileBody.GetComponent<Renderer>().sharedMaterial = material;
+                tileBody.GetComponent<Renderer>().material = material;
                 tileBody.gameObject.AddComponent<MarkAsLeftFace>();
 
                 GameObject tile1 = Instantiate<GameObject>(tilePrefab, Vector3.zero, Quaternion.identity);
@@ -234,9 +234,9 @@ public class RubikGenerator : MonoBehaviour
                 tileBody1.transform.localScale = new Vector3(0.1f, scale, scale);
                 tileBody1.transform.localPosition = new Vector3(0.5f, 0, 0);
                 tileBody1.transform.name = cubes[size - 1][i][j].name;
-                material = new Material(tileBody1.GetComponent<Renderer>().sharedMaterial);
+                material = new Material(tileBody1.GetComponent<Renderer>().material);
                 material.color = cubePreset.RightFace.Color;
-                tileBody1.GetComponent<Renderer>().sharedMaterial = material;
+                tileBody1.GetComponent<Renderer>().material = material;
                 tileBody1.gameObject.AddComponent<MarkAsRightFace>();
             }
         }
@@ -253,9 +253,9 @@ public class RubikGenerator : MonoBehaviour
                 tileBody.transform.localScale = new Vector3(scale, 0.1f, scale);
                 tileBody.transform.localPosition = new Vector3(0, -0.5f, 0);
                 tileBody.transform.name = cubes[i][0][j].name;
-                Material material = new Material(tileBody.GetComponent<Renderer>().sharedMaterial);
+                Material material = new Material(tileBody.GetComponent<Renderer>().material);
                 material.color = cubePreset.UpFace.Color;
-                tileBody.GetComponent<Renderer>().sharedMaterial = material;
+                tileBody.GetComponent<Renderer>().material = material;
                 tileBody.gameObject.AddComponent<MarkAsDownFace>();
 
                 GameObject tile1 = Instantiate<GameObject>(tilePrefab, Vector3.zero, Quaternion.identity);
@@ -267,9 +267,9 @@ public class RubikGenerator : MonoBehaviour
                 tileBody1.transform.localScale = new Vector3(scale, 0.1f, scale);
                 tileBody1.transform.localPosition = new Vector3(0, 0.5f, 0);
                 tileBody1.transform.name = cubes[i][size - 1][j].name;
-                material = new Material(tileBody1.GetComponent<Renderer>().sharedMaterial);
+                material = new Material(tileBody1.GetComponent<Renderer>().material);
                 material.color = cubePreset.DownFace.Color;
-                tileBody1.GetComponent<Renderer>().sharedMaterial = material;
+                tileBody1.GetComponent<Renderer>().material = material;
                 tileBody1.gameObject.AddComponent<MarkAsUpFace>();
             }
         }
@@ -1176,7 +1176,7 @@ public class RubikGenerator : MonoBehaviour
 
         for (int i = 0; i < face.Count; i++)
         {
-            res.Add(face[i].GetComponent<Renderer>().sharedMaterial.color);
+            res.Add(face[i].GetComponent<Renderer>().material.color);
         }
 
         return res;
@@ -1188,7 +1188,7 @@ public class RubikGenerator : MonoBehaviour
         {
             for (int i = 0; i < face.Count; i++)
             {
-                face[i].GetComponent<Renderer>().sharedMaterial.color = colors[i];
+                face[i].GetComponent<Renderer>().material.color = colors[i];
             }
         }
     }
@@ -1213,34 +1213,44 @@ public class RubikGenerator : MonoBehaviour
 
     private IEnumerator CheckCubeCondition(float delay)
     {
-        yield return new WaitForSeconds(delay);
+        while (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
+        {
+            yield return new WaitForSeconds(delay);
 
-        solved = IsSolved();
+            solved = IsSolved();
+        }
     }
 
     public bool IsSolved()
     {
-        var fc = frontFaceCach[0].GetComponent<Renderer>().sharedMaterial.color;
+        frontFaceCache = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();
+        backFaceCache = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
+        upFaceCache = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
+        downFaceCache = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
+        rightFaceCache = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
+        leftFaceCache = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
+
+        var fc = frontFaceCache[0].GetComponent<Renderer>().material.color;
         bool frontSolved = true;
 
-        var bc = backFaceCach[0].GetComponent<Renderer>().sharedMaterial.color;
+        var bc = backFaceCache[0].GetComponent<Renderer>().material.color;
         bool backSolved = true;
 
-        var uc = upFaceCach[0].GetComponent<Renderer>().sharedMaterial.color;
+        var uc = upFaceCache[0].GetComponent<Renderer>().material.color;
         bool upSolved = true;
 
-        var dc = downFaceCach[0].GetComponent<Renderer>().sharedMaterial.color;
+        var dc = downFaceCache[0].GetComponent<Renderer>().material.color;
         bool downSolved = true;
 
-        var rc = rightFaceCach[0].GetComponent<Renderer>().sharedMaterial.color;
+        var rc = rightFaceCache[0].GetComponent<Renderer>().material.color;
         bool rightSolved = true;
 
-        var lc = leftFaceCach[0].GetComponent<Renderer>().sharedMaterial.color;
+        var lc = leftFaceCache[0].GetComponent<Renderer>().material.color;
         bool leftSolved = true;
         
-        for (int i = 1; i < frontFaceCach.Length; i++)
+        for (int i = 1; i < frontFaceCache.Length; i++)
         {
-            if (!frontFaceCach[i].GetComponent<Renderer>().sharedMaterial.color.Equals(fc))
+            if (!frontFaceCache[i].GetComponent<Renderer>().material.color.Equals(fc))
             {
                 frontSolved = false;
             }
@@ -1251,9 +1261,9 @@ public class RubikGenerator : MonoBehaviour
             return false;
         }
 
-        for (int i = 1; i < backFaceCach.Length; i++)
+        for (int i = 1; i < backFaceCache.Length; i++)
         {
-            if (!backFaceCach[i].GetComponent<Renderer>().sharedMaterial.color.Equals(bc))
+            if (!backFaceCache[i].GetComponent<Renderer>().material.color.Equals(bc))
             {
                 backSolved = false;
             }
@@ -1264,9 +1274,9 @@ public class RubikGenerator : MonoBehaviour
             return false;
         }
 
-        for (int i = 1; i < upFaceCach.Length; i++)
+        for (int i = 1; i < upFaceCache.Length; i++)
         {
-            if (!upFaceCach[i].GetComponent<Renderer>().sharedMaterial.color.Equals(uc))
+            if (!upFaceCache[i].GetComponent<Renderer>().material.color.Equals(uc))
             {
                 upSolved = false;
             }
@@ -1277,9 +1287,9 @@ public class RubikGenerator : MonoBehaviour
             return false;
         }
 
-        for (int i = 1; i < downFaceCach.Length; i++)
+        for (int i = 1; i < downFaceCache.Length; i++)
         {
-            if (!downFaceCach[i].GetComponent<Renderer>().sharedMaterial.color.Equals(dc))
+            if (!downFaceCache[i].GetComponent<Renderer>().material.color.Equals(dc))
             {
                 downSolved = false;
             }
@@ -1290,9 +1300,9 @@ public class RubikGenerator : MonoBehaviour
             return false;
         }
 
-        for (int i = 1; i < rightFaceCach.Length; i++)
+        for (int i = 1; i < rightFaceCache.Length; i++)
         {
-            if (!rightFaceCach[i].GetComponent<Renderer>().sharedMaterial.color.Equals(rc))
+            if (!rightFaceCache[i].GetComponent<Renderer>().material.color.Equals(rc))
             {
                 frontSolved = false;
             }
@@ -1303,9 +1313,9 @@ public class RubikGenerator : MonoBehaviour
             return false;
         }
 
-        for (int i = 1; i < leftFaceCach.Length; i++)
+        for (int i = 1; i < leftFaceCache.Length; i++)
         {
-            if (!leftFaceCach[i].GetComponent<Renderer>().sharedMaterial.color.Equals(lc))
+            if (!leftFaceCache[i].GetComponent<Renderer>().material.color.Equals(lc))
             {
                 leftSolved = false;
             }
@@ -1347,42 +1357,42 @@ public class RubikGenerator : MonoBehaviour
 
             for (int j = 0; j < size * size; j++)
             {
-                playerData.currentColors.frontFaceColors[j] = front[j].GetComponent<Renderer>().sharedMaterial.color;
+                playerData.currentColors.frontFaceColors[j] = front[j].GetComponent<Renderer>().material.color;
             }
 
             var back = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                playerData.currentColors.backFaceColors[j] = back[j].GetComponent<Renderer>().sharedMaterial.color;
+                playerData.currentColors.backFaceColors[j] = back[j].GetComponent<Renderer>().material.color;
             }
 
             var up = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                playerData.currentColors.upFaceColors[j] = up[j].GetComponent<Renderer>().sharedMaterial.color;
+                playerData.currentColors.upFaceColors[j] = up[j].GetComponent<Renderer>().material.color;
             }
 
             var down = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                playerData.currentColors.downFaceColors[j] = down[j].GetComponent<Renderer>().sharedMaterial.color;
+                playerData.currentColors.downFaceColors[j] = down[j].GetComponent<Renderer>().material.color;
             }
 
             var right = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                playerData.currentColors.rightFaceColors[j] = right[j].GetComponent<Renderer>().sharedMaterial.color;
+                playerData.currentColors.rightFaceColors[j] = right[j].GetComponent<Renderer>().material.color;
             }
 
             var left = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                playerData.currentColors.leftFaceColors[j] = left[j].GetComponent<Renderer>().sharedMaterial.color;
+                playerData.currentColors.leftFaceColors[j] = left[j].GetComponent<Renderer>().material.color;
             }
         }
     }
@@ -1402,42 +1412,42 @@ public class RubikGenerator : MonoBehaviour
 
             for (int j = 0; j < size * size; j++)
             {
-                front[j].GetComponent<Renderer>().sharedMaterial.color = playerData.currentColors.frontFaceColors[j];
+                front[j].GetComponent<Renderer>().material.color = playerData.currentColors.frontFaceColors[j];
             }
 
             var back = cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                back[j].GetComponent<Renderer>().sharedMaterial.color = playerData.currentColors.backFaceColors[j];
+                back[j].GetComponent<Renderer>().material.color = playerData.currentColors.backFaceColors[j];
             }
 
             var up = cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                up[j].GetComponent<Renderer>().sharedMaterial.color = playerData.currentColors.upFaceColors[j];
+                up[j].GetComponent<Renderer>().material.color = playerData.currentColors.upFaceColors[j];
             }
 
             var down = cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                down[j].GetComponent<Renderer>().sharedMaterial.color = playerData.currentColors.downFaceColors[j];
+                down[j].GetComponent<Renderer>().material.color = playerData.currentColors.downFaceColors[j];
             }
 
             var right = cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                right[j].GetComponent<Renderer>().sharedMaterial.color = playerData.currentColors.rightFaceColors[j];
+                right[j].GetComponent<Renderer>().material.color = playerData.currentColors.rightFaceColors[j];
             }
 
             var left = cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
 
             for (int j = 0; j < size * size; j++)
             {
-                left[j].GetComponent<Renderer>().sharedMaterial.color = playerData.currentColors.leftFaceColors[j];
+                left[j].GetComponent<Renderer>().material.color = playerData.currentColors.leftFaceColors[j];
             }
         }
     }

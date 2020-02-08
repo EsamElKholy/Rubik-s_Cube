@@ -126,7 +126,7 @@ public class RubikController : MonoBehaviour
 
         currentAxis = axis;
 
-        if (!scrambling)
+        if (!scrambling && rotationCommands.Count > 0)
         {
             RubikGenerator.Instance.RecordColors(GameManager.Instance.playerData);
         }
@@ -140,8 +140,14 @@ public class RubikController : MonoBehaviour
         rotationCommand.yIndex = Random.Range(0, RubikGenerator.Instance.size - 1);
         rotationCommand.zIndex = Random.Range(0, RubikGenerator.Instance.size - 1);
 
-        rotationCommand.axis = (AXIS)Random.Range(0, 2);
-        rotationCommand.direction = Mathf.Clamp(Random.Range(-1, 1), -1, 1);
+        rotationCommand.axis = (AXIS)Random.Range(0, 3);
+        rotationCommand.direction = Random.Range(-1, 2);
+
+        if (rotationCommand.direction == 0)
+        {
+            rotationCommand.direction = 1;
+        }
+
         rotationCommand.angle = 90;
 
         return rotationCommand;

@@ -14,6 +14,7 @@ public class InGameUIManager : MonoBehaviour
 {
     public Text timer;
     public Text confirmationText;
+    public Text congratulationTimer;
     public Button undo;
     public Button pause;
 
@@ -100,5 +101,10 @@ public class InGameUIManager : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void OnWin()
+    {
+        congratulationTimer.text = "Timer: " + GameManager.Instance.playerData.time.ToString();
     }
 }

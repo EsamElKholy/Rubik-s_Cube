@@ -91,6 +91,7 @@ public class RubikGenerator : MonoBehaviour
 
     public void GenerateCube()
     {
+
         if (cubeRoot.transform.childCount > 0)
         {
             DestroyCube();
@@ -342,18 +343,45 @@ public class RubikGenerator : MonoBehaviour
 
     public void ResetPosition(GameObject cube)
     {
-        int x = int.Parse(cube.name[0].ToString()) - 1;
-        int y = int.Parse(cube.name[1].ToString()) - 1;
-        int z = int.Parse(cube.name[2].ToString()) - 1;
-
-        var pos = cubesPositions[x][y][z];
-
-        cube.transform.rotation = Quaternion.identity;
-        cube.transform.position = pos;
-
-        for (int i = 0; i < cube.transform.childCount; i++)
+        if (cube.name.Equals(cubeRoot.name))
         {
-            cube.transform.GetChild(i).transform.rotation = Quaternion.identity;
+            for (int i = 0; i < cube.transform.childCount; i++)
+            {
+                if (cube.transform.GetChild(i).name.Equals("Slice"))
+                {
+                    continue;
+                }
+
+                int x = int.Parse(cube.transform.GetChild(i).name[0].ToString()) - 1;
+                int y = int.Parse(cube.transform.GetChild(i).name[1].ToString()) - 1;
+                int z = int.Parse(cube.transform.GetChild(i).name[2].ToString()) - 1;
+
+                var pos = cubesPositions[x][y][z];
+
+                cube.transform.GetChild(i).rotation = Quaternion.identity;
+                cube.transform.GetChild(i).position = pos;
+
+                for (int j = 0; j < cube.transform.GetChild(i).childCount; j++)
+                {
+                    cube.transform.GetChild(i).GetChild(j).transform.rotation = Quaternion.identity;
+                }
+            }
+        }
+        else
+        {
+            int x = int.Parse(cube.name[0].ToString()) - 1;
+            int y = int.Parse(cube.name[1].ToString()) - 1;
+            int z = int.Parse(cube.name[2].ToString()) - 1;
+
+            var pos = cubesPositions[x][y][z];
+
+            cube.transform.rotation = Quaternion.identity;
+            cube.transform.position = pos;
+
+            for (int i = 0; i < cube.transform.childCount; i++)
+            {
+                cube.transform.GetChild(i).transform.rotation = Quaternion.identity;
+            }
         }
     }
 

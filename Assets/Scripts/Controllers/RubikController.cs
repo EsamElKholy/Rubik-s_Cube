@@ -34,12 +34,15 @@ public class RubikController : MonoBehaviour
     [HideInInspector]
     public bool scrambling = false;
 
+    private Camera camera;
+
     private Stack<RotationCommand> rotationCommands = new Stack<RotationCommand>();
 
     // Start is called before the first frame update
     void Start()
     {
-        //Scramble();
+        camera = Camera.main;
+        camera.transform.parent.rotation = Quaternion.identity;
     }
 
     // Update is called once per frame
@@ -216,30 +219,40 @@ public class RubikController : MonoBehaviour
 
     private IEnumerator ActivateWinAnimation(float awaytime, float aroundTime)
     {
-        yield return null;
-
-        var dir = (Camera.main.transform.position - transform.position).normalized;
-        float dist = 4;
-        var newPos = Camera.main.transform.position + (dir * dist) + (Vector3.up * dist * 5);
-        float counter = 0;      
-
-        while (counter < awaytime)
+        float counter = 0;   
+        
+        while (counter < 1)
         {
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, newPos, (counter / dist) / awaytime);
-            Camera.main.transform.LookAt(transform, Camera.main.transform.up);
+            camera.transform.parent.rotation = Quaternion.Slerp(camera.transform.parent.rotation, Quaternion.identity, counter);
+            camera.transform.LookAt(transform, camera.transform.up);
             counter += Time.deltaTime;
             yield return null;
         }
 
         counter = 0;
 
+        var dir = (camera.transform.position - transform.position).normalized;
+        float dist = 2;
+        var newPos = camera.transform.position + (dir * dist) + (Vector3.up * dist * 2);// + (Vector3.right * dist * 4);
+
+        while (counter < awaytime)
+        {
+            camera.transform.position = Vector3.Lerp(Camera.main.transform.position, newPos, (counter / dist) / awaytime);
+            camera.transform.LookAt(transform, camera.transform.up);
+            counter += Time.deltaTime;
+            yield return null;
+        }        
+
+        counter = 0;
         while (counter < aroundTime)
         {
-            Camera.main.transform.parent.RotateAround(Vector3.zero, Camera.main.transform.up, 90 * Time.deltaTime);
-            Camera.main.transform.LookAt(transform, Camera.main.transform.up);
+            camera.transform.parent.RotateAround(Vector3.zero, transform.up, 90 * Time.deltaTime);
+            camera.transform.LookAt(transform, camera.transform.up);
             counter += Time.deltaTime;
             yield return null;
         }
+
+        RubikGenerator.Instance.ResetPosition(RubikGenerator.Instance.cubeRoot.gameObject);
 
         if (onWinAnimationFinish)
         {

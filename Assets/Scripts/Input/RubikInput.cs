@@ -52,11 +52,20 @@ public class RubikInput : MonoBehaviour
     [HideInInspector]
     public float y;
 
-    public new Camera camera;
+    private new Camera camera;
+
+    private float originalCameraFOV;
+    private Vector3 originalCameraPos;
+    private Quaternion originalCameraRot;
 
     // Start is called before the first frame update
     void Start()
     {
+        camera = Camera.main;
+        originalCameraPos = camera.transform.position;
+        originalCameraRot = camera.transform.rotation;
+        originalCameraFOV = camera.fieldOfView;
+
         rubikController = GetComponent<RubikController>();
 
         portraitMinZoom = landScapeMinZoom * portraitZoomDecreasePercentage;
@@ -472,5 +481,17 @@ public class RubikInput : MonoBehaviour
     public RubikController GetController()
     {
         return rubikController;
+    }
+
+    public void ResetCamera()
+    {
+        camera.transform.rotation = originalCameraRot;
+        camera.transform.position = originalCameraPos;
+        camera.fieldOfView = originalCameraFOV;
+    }
+
+    public Quaternion GetOriginalCamRot()
+    {
+        return originalCameraRot;
     }
 }

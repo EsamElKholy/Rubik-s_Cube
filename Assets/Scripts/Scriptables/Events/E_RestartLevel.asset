@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bfe023a6a62a214c806925c2dd97611, type: 3}
+  m_Name: E_RestartLevel
+  m_EditorClassIdentifier: 
+  listeners: []
+  Description: 
+  Type: 1
+  UseInEditMode: 0
+  Events:
+  - {fileID: 11400000, guid: 73455fed601dbc543b3941ef3c7fe125, type: 2}
+  - {fileID: 11400000, guid: bd136c11ec5bd814099058a366393260, type: 2}

@@ -22,14 +22,16 @@ public struct RotationCommand
 }
 
 public class RubikController : MonoBehaviour
-{   
+{
+    [KAI.KAIEvent]
+    public KAI.GameEvent onScrambleFinish;
+
     private AXIS currentAxis = AXIS.NONE;
     private bool rotationLocked;
     [HideInInspector]
     public bool scrambling = false;
 
     private Stack<RotationCommand> rotationCommands = new Stack<RotationCommand>();
-
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +42,10 @@ public class RubikController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.GameSetup)
+        {
+            Scramble();
+        }
     }
 
     public void Rotate(AXIS axis, float angle, float direction, RotationCommand.CommandType rotationType, float rotationTime = 0.5f)
@@ -117,6 +122,11 @@ public class RubikController : MonoBehaviour
         RubikGenerator.Instance.EmptySlice();
 
         currentAxis = axis;
+
+        if (!scrambling)
+        {
+            RubikGenerator.Instance.RecordColors(GameManager.Instance.playerData);
+        }
     }
 
     private RotationCommand GenerateRotationCommand()
@@ -145,6 +155,8 @@ public class RubikController : MonoBehaviour
 
     private IEnumerator AutoRotate(float time, float timeForEachRotation)
     {
+        yield return new WaitForSeconds(0.8f);
+
         int numOfRotations = Mathf.CeilToInt(time / timeForEachRotation);
 
         for (int i = 0; i < numOfRotations; i++)
@@ -160,6 +172,11 @@ public class RubikController : MonoBehaviour
         }
 
         scrambling = false;
+
+        if (onScrambleFinish)
+        {
+            onScrambleFinish.Raise();
+        }
     }
 
     public void UndoRotation()

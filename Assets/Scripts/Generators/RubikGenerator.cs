@@ -254,19 +254,10 @@ public class RubikGenerator : MonoBehaviour
 
     public void DestroyCube()
     {
-        var front = cubeRoot.GetComponentsInChildren<MarkAsFrontFace>();        
-
-        float size = Mathf.Sqrt(front.Length);
-
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < cubeRoot.childCount; i++)
         {
-            for (int j = 0; j < size; j++)
-            {
-                for (int k = 0; k < size; k++)
-                {
-                    DestroyImmediate(cubes[i][j][k]);
-                }
-            }
+            DestroyImmediate(cubeRoot.GetChild(i).gameObject);
+            i--;
         }
 
         DestroyImmediate(slice);

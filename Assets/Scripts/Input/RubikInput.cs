@@ -26,16 +26,26 @@ public class RubikInput : MonoBehaviour
 
     private bool firstOrbit = true;
 
-    private float orbitSpeed = 150;
+    private float orbitSpeed = 100;
 
     [HideInInspector]
     public bool cubeRotationMode = false;
     [HideInInspector]
     public bool cameraOrbitMode = false;
 
+    private float portraitZoomDecreasePercentage = 0.85f;
+
+    private float portraitMinZoom = 30;
+    private float portraitMaxZoom = 90;
+
+    private float landScapeMinZoom = 30;
+    private float landScapeMaxZoom = 90;
+
     private float minZoom = 30;
     private float maxZoom = 90;
     private float zoomSpeed = 800;
+
+    private float currentFOV;
 
     [HideInInspector]
     public float x;
@@ -48,6 +58,31 @@ public class RubikInput : MonoBehaviour
     void Start()
     {
         rubikController = GetComponent<RubikController>();
+
+        portraitMinZoom = landScapeMinZoom * portraitZoomDecreasePercentage;
+        portraitMaxZoom = landScapeMaxZoom / portraitZoomDecreasePercentage;
+
+        currentFOV = camera.fieldOfView;
+    }
+
+    private void Update()
+    {
+        if (Screen.width < Screen.height)
+        {
+            minZoom = portraitMinZoom;
+            maxZoom = portraitMaxZoom;
+
+            camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+        }
+        else
+        {
+            minZoom = landScapeMinZoom;
+            maxZoom = landScapeMaxZoom;
+
+            camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+        }
+
+        camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentFOV, 5 * Time.deltaTime);
     }
 
     public void ExecuteZoomInput(float zoomValue)
@@ -56,9 +91,11 @@ public class RubikInput : MonoBehaviour
         {
             if (camera)
             {
-                camera.fieldOfView -= zoomValue * zoomSpeed * Time.deltaTime;
+                currentFOV -= zoomValue * zoomSpeed * Time.deltaTime;
+                //camera.fieldOfView -= zoomValue * zoomSpeed * Time.deltaTime;
 
-                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+                currentFOV = Mathf.Clamp(currentFOV, minZoom, maxZoom);
+                //camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
             }
         }
     }
@@ -369,24 +406,28 @@ public class RubikInput : MonoBehaviour
         }
     }
 
+    Quaternion currentRotation;
+    Quaternion currentRotation1;
     public void ExecuteCameraOrbit(float x, float y)
     {
         if (!firstOrbit)
         {
-            camera.transform.rotation = oldCamR;
-            camera.transform.position = oldCamP;
+            camera.transform.parent.rotation = oldCamR;
+            camera.transform.parent.position = oldCamP;
             transform.rotation = oldCubeR;
             transform.position = oldCubeP;
         }
-
+      
         Vector2 delta = new Vector2(x * orbitSpeed, y * orbitSpeed);
         delta.y = ClampAngle(delta.y, -360, 360);
-        camera.transform.RotateAround(Vector3.zero, Vector3.up, delta.x * Time.deltaTime);
-        transform.RotateAround(Vector3.zero, camera.transform.right, delta.y * Time.deltaTime);
-        camera.transform.LookAt(Vector3.zero, camera.transform.up);
+        currentRotation = Quaternion.AngleAxis(delta.x * Time.deltaTime, Vector3.up) * camera.transform.parent.rotation;
+        camera.transform.parent.rotation = Quaternion.Slerp(camera.transform.parent.rotation, currentRotation, 5);
+        currentRotation1 = Quaternion.AngleAxis(delta.y * Time.deltaTime, camera.transform.right) * transform.rotation;
+        transform.rotation = Quaternion.Slerp(transform.rotation, currentRotation1, 5);
+        camera.transform.parent.LookAt(Vector3.zero, camera.transform.up);
 
-        oldCamR = camera.transform.rotation;
-        oldCamP = camera.transform.position;
+        oldCamR = camera.transform.parent.rotation;
+        oldCamP = camera.transform.parent.position;
         oldCubeR = transform.rotation;
         oldCubeP = transform.position;
         firstOrbit = false;
@@ -401,9 +442,9 @@ public class RubikInput : MonoBehaviour
 
         if (cameraOrbitMode)
         {
-            camera.transform.SetParent(transform);
+            camera.transform.parent.SetParent(transform);
             transform.rotation = Quaternion.identity;
-            camera.transform.SetParent(null);
+            camera.transform.parent.SetParent(null);
         }
         cube = null;
         dragging = false;

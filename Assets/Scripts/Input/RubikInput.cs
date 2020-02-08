@@ -67,22 +67,25 @@ public class RubikInput : MonoBehaviour
 
     private void Update()
     {
-        if (Screen.width < Screen.height)
+        if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
         {
-            minZoom = portraitMinZoom;
-            maxZoom = portraitMaxZoom;
+            if (Screen.width < Screen.height)
+            {
+                minZoom = portraitMinZoom;
+                maxZoom = portraitMaxZoom;
 
-            camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
-        }
-        else
-        {
-            minZoom = landScapeMinZoom;
-            maxZoom = landScapeMaxZoom;
+                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+            }
+            else
+            {
+                minZoom = landScapeMinZoom;
+                maxZoom = landScapeMaxZoom;
 
-            camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
-        }
+                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+            }
 
-        camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentFOV, 5 * Time.deltaTime);
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentFOV, 5 * Time.deltaTime);
+        }        
     }
 
     public void ExecuteZoomInput(float zoomValue)

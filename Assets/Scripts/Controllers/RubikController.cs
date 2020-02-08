@@ -26,6 +26,9 @@ public class RubikController : MonoBehaviour
     [KAI.KAIEvent]
     public KAI.GameEvent onScrambleFinish;
 
+    [KAI.KAIEvent]
+    public KAI.GameEvent onWinAnimationFinish;
+
     private AXIS currentAxis = AXIS.NONE;
     private bool rotationLocked;
     [HideInInspector]
@@ -149,7 +152,7 @@ public class RubikController : MonoBehaviour
         if (!scrambling)
         {
             scrambling = true;
-            StartCoroutine(AutoRotate(3, 0.3f));
+            StartCoroutine(AutoRotate(4, 0.3f));
         }
     }
 
@@ -198,5 +201,43 @@ public class RubikController : MonoBehaviour
     public void SetSelectedCube(int x, int y, int z)
     {
         RubikGenerator.Instance.SetSelectedCube(x, y, z);
+    }
+
+    public void OnWin()
+    {
+        StartCoroutine(ActivateWinAnimation(4, 8));
+    }
+
+    private IEnumerator ActivateWinAnimation(float awaytime, float aroundTime)
+    {
+        yield return null;
+
+        var dir = (Camera.main.transform.position - transform.position).normalized;
+        float dist = 4;
+        var newPos = Camera.main.transform.position + (dir * dist) + (Vector3.up * dist * 5);
+        float counter = 0;      
+
+        while (counter < awaytime)
+        {
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, newPos, (counter / dist) / awaytime);
+            Camera.main.transform.LookAt(transform, Camera.main.transform.up);
+            counter += Time.deltaTime;
+            yield return null;
+        }
+
+        counter = 0;
+
+        while (counter < aroundTime)
+        {
+            Camera.main.transform.parent.RotateAround(Vector3.zero, Camera.main.transform.up, 90 * Time.deltaTime);
+            Camera.main.transform.LookAt(transform, Camera.main.transform.up);
+            counter += Time.deltaTime;
+            yield return null;
+        }
+
+        if (onWinAnimationFinish)
+        {
+            onWinAnimationFinish.Raise();
+        }
     }
 }

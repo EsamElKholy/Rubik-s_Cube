@@ -88,11 +88,18 @@ public class PlayerData : ScriptableObject
 
     public bool CanContinue()
     {
-        if (time.seconds > 0)
+        if (time.seconds > 2)
         {
             return true;
         }
 
         return false;
+    }
+
+    public float GetSecondsElapsed()
+    {
+        float res = time.seconds + (time.minutes * 60) + (time.hours * 60);
+
+        return res;
     }
 }

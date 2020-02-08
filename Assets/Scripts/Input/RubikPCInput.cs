@@ -14,9 +14,9 @@ public class RubikPCInput : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame && !rubikInput.GetController().scrambling)
+        if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame && !rubikInput.GetController().scrambling && !rubikInput.GetController().rotationLocked)
         {
             float zoomValue = Input.GetAxis("Mouse ScrollWheel");
 

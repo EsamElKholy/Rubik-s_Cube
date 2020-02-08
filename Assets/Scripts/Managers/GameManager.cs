@@ -128,6 +128,9 @@ public class GameManager : MonoBehaviour
             RubikGenerator.Instance.size = playerData.cubeSize;
             RubikGenerator.Instance.GenerateCube();
 
+            FindObjectOfType<RubikInput>().ResetCamera();
+            RubikGenerator.Instance.ResetPosition(RubikGenerator.Instance.cubeRoot.gameObject);
+
             if (isContinue)
             {
                 RubikGenerator.Instance.SetColors(playerData);

@@ -58,6 +58,9 @@ public class RubikInput : MonoBehaviour
     private Vector3 originalCameraPos;
     private Quaternion originalCameraRot;
 
+    private RubikPCInput pcInput;
+    private RubikTouchInput touchInput;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -72,29 +75,58 @@ public class RubikInput : MonoBehaviour
         portraitMaxZoom = landScapeMaxZoom / portraitZoomDecreasePercentage;
 
         currentFOV = camera.fieldOfView;
+
+        pcInput = GetComponent<RubikPCInput>();
+        touchInput = GetComponent<RubikTouchInput>();
     }
 
     private void Update()
     {
-        if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
+        if (rubikController.rotationLocked == false)
         {
-            if (Screen.width < Screen.height)
+            if (!pcInput)
             {
-                minZoom = portraitMinZoom;
-                maxZoom = portraitMaxZoom;
-
-                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
-            }
-            else
-            {
-                minZoom = landScapeMinZoom;
-                maxZoom = landScapeMaxZoom;
-
-                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+                pcInput = GetComponent<RubikPCInput>();
+                touchInput = GetComponent<RubikTouchInput>();
             }
 
-            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentFOV, 5 * Time.deltaTime);
-        }        
+            if (Input.touchCount > 0)
+            {
+                touchInput.enabled = true;
+                pcInput.enabled = false;
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                touchInput.enabled = false;
+                pcInput.enabled = true;
+            }
+
+            if (!camera)
+            {
+                camera = Camera.main;
+            }
+
+            if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
+            {
+                if (Screen.width < Screen.height)
+                {
+                    minZoom = portraitMinZoom;
+                    maxZoom = portraitMaxZoom;
+
+                    camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+                }
+                else
+                {
+                    minZoom = landScapeMinZoom;
+                    maxZoom = landScapeMaxZoom;
+
+                    camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, minZoom, maxZoom);
+                }
+
+                camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, currentFOV, 5 * Time.deltaTime);
+            }
+        }             
     }
 
     public void ExecuteZoomInput(float zoomValue)
@@ -120,9 +152,9 @@ public class RubikInput : MonoBehaviour
         {
             if (cameraOrbitMode)
             {
-                camera.transform.SetParent(transform);
+                camera.transform.parent.SetParent(transform);
                 transform.rotation = Quaternion.identity;
-                camera.transform.SetParent(null);
+                camera.transform.parent.SetParent(null);
             }
 
             cube = hit.collider.gameObject;
@@ -315,7 +347,7 @@ public class RubikInput : MonoBehaviour
                 }
                 else if (maxElement == az)
                 {
-                    var marker = firstSelectedCube.GetComponent<MarkAsFrontFace>();
+                    var marker = firstSelectedCube.GetComponent<MarkAsUpFace>();
 
                     axis = AXIS.X;
 
@@ -323,22 +355,22 @@ public class RubikInput : MonoBehaviour
                     {
                         if (marker)
                         {
-                            direction = -1;
+                            direction = 1;
                         }
                         else
                         {
-                            direction = 1;
+                            direction = -1;
                         }
                     }
                     else
                     {
                         if (marker)
                         {
-                            direction = 1;
+                            direction = -1;
                         }
                         else
                         {
-                            direction = -1;
+                            direction = 1;
                         }
                     }
                 }
@@ -424,6 +456,10 @@ public class RubikInput : MonoBehaviour
     {
         if (!firstOrbit)
         {
+            if (!camera)
+            {
+                camera = Camera.main;
+            }
             camera.transform.parent.rotation = oldCamR;
             camera.transform.parent.position = oldCamP;
             transform.rotation = oldCubeR;
@@ -485,9 +521,25 @@ public class RubikInput : MonoBehaviour
 
     public void ResetCamera()
     {
+        camera.transform.parent.rotation = Quaternion.identity;
+        camera.transform.parent.position = Vector3.zero;
+
+        transform.rotation = Quaternion.identity;
+        transform.position = Vector3.zero;
+
         camera.transform.rotation = originalCameraRot;
         camera.transform.position = originalCameraPos;
         camera.fieldOfView = originalCameraFOV;
+
+        originalCameraPos = camera.transform.position;
+        originalCameraRot = camera.transform.rotation;
+
+        oldCamP = camera.transform.parent.position;
+        oldCamR = camera.transform.parent.rotation;
+        oldCubeP = transform.position;
+        oldCubeR = transform.rotation;
+
+        firstOrbit = false;
     }
 
     public Quaternion GetOriginalCamRot()

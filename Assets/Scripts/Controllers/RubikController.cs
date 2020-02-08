@@ -30,7 +30,8 @@ public class RubikController : MonoBehaviour
     public KAI.GameEvent onWinAnimationFinish;
 
     private AXIS currentAxis = AXIS.NONE;
-    private bool rotationLocked;
+    [HideInInspector]
+    public bool rotationLocked;
     [HideInInspector]
     public bool scrambling = false;
 
@@ -48,13 +49,18 @@ public class RubikController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!camera)
+        {
+            camera = Camera.main;
+        }
+
         if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.GameSetup)
         {
             Scramble();
         }
     }
 
-    public void Rotate(AXIS axis, float angle, float direction, RotationCommand.CommandType rotationType, float rotationTime = 0.5f)
+    public void Rotate(AXIS axis, float angle, float direction, RotationCommand.CommandType rotationType, float rotationTime = 0.3f)
     {
         if (!rotationLocked)
         {
@@ -78,12 +84,34 @@ public class RubikController : MonoBehaviour
 
             var slice = RubikGenerator.Instance.GetSlice(axis);
 
-            StartCoroutine(RotateSlice(slice, axis, angle, rotationTime, direction));        
+            StartCoroutine(RotateSlice(slice, axis, angle, rotationTime, direction, rotationType));        
         }
     }
 
-    private IEnumerator RotateSlice(GameObject slice, AXIS axis, float angle, float time, float direction)
+    private IEnumerator RotateSlice(GameObject slice, AXIS axis, float angle, float time, float direction, RotationCommand.CommandType mode)
     {
+        if (mode == RotationCommand.CommandType.Auto && camera.transform.parent.rotation.Equals(Quaternion.identity) == false)
+        {
+            var input = GetComponent<RubikInput>();
+            input.cameraOrbitMode = false;
+            input.cubeRotationMode = false;
+
+            float counter = 0;
+            float t = 0.5f;
+            while (counter < t)
+            {
+                camera.transform.parent.rotation = Quaternion.Slerp(camera.transform.parent.rotation, Quaternion.identity, counter / t);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, counter / t);
+                camera.transform.LookAt(transform, camera.transform.up);
+                counter += Time.deltaTime;
+                yield return null;
+            }
+
+            input.ResetCamera();
+            camera.transform.parent.rotation = Quaternion.identity;
+            //RubikGenerator.Instance.ResetPosition(RubikGenerator.Instance.cubeRoot.gameObject);
+        }       
+
         float currentTime = 0;
 
         Quaternion oldRotation = slice.transform.localRotation;

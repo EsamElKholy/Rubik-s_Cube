@@ -73,8 +73,8 @@ public class RubikController : MonoBehaviour
             command.yIndex = int.Parse(RubikGenerator.Instance.selecedCube.name[1].ToString()) - 1;
             command.zIndex = int.Parse(RubikGenerator.Instance.selecedCube.name[2].ToString()) - 1;
 
-            command.direction = -direction;
-            command.angle = -angle;
+            command.direction = direction;
+            command.angle = angle;
             command.axis = axis;
             command.commandType = rotationType;
 
@@ -112,7 +112,7 @@ public class RubikController : MonoBehaviour
 
             input.ResetCamera();
             camera.transform.parent.rotation = Quaternion.identity;
-            //RubikGenerator.Instance.ResetPosition(RubikGenerator.Instance.cubeRoot.gameObject);
+            RubikRotator.Instance.ResetCube(RubikGenerator.Instance.cubeRoot.gameObject);
         }       
 
         float currentTime = 0;
@@ -175,14 +175,14 @@ public class RubikController : MonoBehaviour
         rotationCommand.zIndex = Random.Range(0, RubikGenerator.Instance.size - 1);
 
         rotationCommand.axis = (AXIS)Random.Range(0, 3);
-        rotationCommand.direction = Random.Range(-1, 2);
+        rotationCommand.direction = -1;
 
         if (rotationCommand.direction == 0)
         {
             rotationCommand.direction = 1;
         }
 
-        rotationCommand.angle = 90;
+        rotationCommand.angle = -90;
 
         return rotationCommand;
     }
@@ -192,7 +192,7 @@ public class RubikController : MonoBehaviour
         if (!scrambling)
         {
             scrambling = true;
-            StartCoroutine(AutoRotate(4, 0.3f));
+            StartCoroutine(AutoRotate(14, 0.3f));
         }
     }
 
@@ -229,7 +229,7 @@ public class RubikController : MonoBehaviour
             var command = rotationCommands.Pop();
 
             SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
-            Rotate(command.axis, command.angle, command.direction, RotationCommand.CommandType.Auto);
+            Rotate(command.axis, -command.angle, -command.direction, RotationCommand.CommandType.Auto);
         }
     }
 

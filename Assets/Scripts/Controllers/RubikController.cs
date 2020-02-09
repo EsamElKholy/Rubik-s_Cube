@@ -192,7 +192,7 @@ public class RubikController : MonoBehaviour
         if (!scrambling)
         {
             scrambling = true;
-            StartCoroutine(AutoRotate(14, 0.3f));
+            StartCoroutine(AutoRotate(4, 0.3f));
         }
     }
 

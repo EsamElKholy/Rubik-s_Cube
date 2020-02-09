@@ -144,7 +144,6 @@ public class GameManager : MonoBehaviour
                 playerData.WipeOutData();
             }
 
-            playerData.cubeSize = Mathf.Clamp(cubeSize, 2, 6);
             RubikGenerator.Instance.size = playerData.cubeSize;
             RubikGenerator.Instance.GenerateCube();
 
@@ -179,10 +178,10 @@ public class GameManager : MonoBehaviour
     {
         while (Application.isPlaying)
         {
-            if (!File.Exists(Application.persistentDataPath + "/Saves/" + "player.json"))
-            {
-                File.Create(Application.persistentDataPath + "/Saves/" + "player.json");
-            }
+            //if (!File.Exists(Application.persistentDataPath + "/Saves/" + "player.json"))
+            //{
+            //    File.Create(Application.persistentDataPath + "/Saves/" + "player.json");
+            //}
 
             string json = JsonUtility.ToJson(playerData);
             File.WriteAllText(Application.persistentDataPath + "/Saves/" + "player.json", json);
@@ -213,5 +212,6 @@ public class GameManager : MonoBehaviour
     public void SetCubeSize(int size)
     {
         cubeSize = size;
+        playerData.cubeSize = Mathf.Clamp(cubeSize, 2, 6);
     }
 }

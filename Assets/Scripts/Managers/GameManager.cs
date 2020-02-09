@@ -145,6 +145,11 @@ public class GameManager : MonoBehaviour
                 playerData.WipeOutData();
             }
 
+            if (!isContinue)
+            {
+                playerData.cubeSize = Mathf.Clamp(cubeSize, 2, 6);
+            }
+
             RubikGenerator.Instance.size = playerData.cubeSize;
             RubikGenerator.Instance.GenerateCube();
 
@@ -210,6 +215,6 @@ public class GameManager : MonoBehaviour
     public void SetCubeSize(int size)
     {
         cubeSize = size;
-        playerData.cubeSize = Mathf.Clamp(cubeSize, 2, 6);
+        //playerData.cubeSize = Mathf.Clamp(cubeSize, 2, 6);
     }
 }

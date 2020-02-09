@@ -19,7 +19,10 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (dropdown)
         {
-            SetCubeSizeMode(dropdown);
+            if (dropdown.transform.parent.gameObject.activeSelf)
+            {
+                SetCubeSizeMode(dropdown);
+            }
         }
 
         if (GameManager.Instance.playerData.CanContinue())

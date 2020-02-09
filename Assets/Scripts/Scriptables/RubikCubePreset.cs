@@ -24,11 +24,22 @@ public struct RubikCubeFaces
 public class RubikCubeFaceColors
 {
     public List<Color> frontFaceColors = new List<Color>();
+    public List<Vector3> frontPositions = new List<Vector3>();
+
     public List<Color> backFaceColors = new List<Color>();
+    public List<Vector3> backPositions = new List<Vector3>();
+
     public List<Color> upFaceColors = new List<Color>();
+    public List<Vector3> upPositions = new List<Vector3>();
+
     public List<Color> downFaceColors = new List<Color>();
+    public List<Vector3> downPositions = new List<Vector3>();
+
     public List<Color> rightFaceColors = new List<Color>();
+    public List<Vector3> rightPositions = new List<Vector3>();
+
     public List<Color> leftFaceColors = new List<Color>();
+    public List<Vector3> leftPositions = new List<Vector3>();
 }
 
 [CreateAssetMenu(fileName = "New Rubik Cube Preset", menuName = "Rubik Cube/Rubik Cube Preset", order = 0)]

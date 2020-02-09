@@ -781,6 +781,13 @@ public class RubikCubeManager : MonoBehaviour
                 playerData.currentColors.rightFaceColors = new List<Color>();
                 playerData.currentColors.leftFaceColors = new List<Color>();
 
+                playerData.currentColors.frontPositions  = new List<Vector3>();
+                playerData.currentColors.backPositions  = new List<Vector3>();
+                playerData.currentColors.upPositions    = new List<Vector3>();
+                playerData.currentColors.downPositions  = new List<Vector3>();
+                playerData.currentColors.rightPositions = new List<Vector3>();
+                playerData.currentColors.leftPositions  = new List<Vector3>();
+
                 for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
                 {
                     playerData.currentColors.frontFaceColors.Add(Color.clear);
@@ -789,6 +796,13 @@ public class RubikCubeManager : MonoBehaviour
                     playerData.currentColors.downFaceColors.Add(Color.clear);
                     playerData.currentColors.rightFaceColors.Add(Color.clear);
                     playerData.currentColors.leftFaceColors.Add(Color.clear);
+
+                    playerData.currentColors.frontPositions.Add(Vector3.zero);
+                    playerData.currentColors.backPositions.Add(Vector3.zero);
+                    playerData.currentColors.upPositions.Add(Vector3.zero);
+                    playerData.currentColors.downPositions.Add(Vector3.zero);
+                    playerData.currentColors.rightPositions.Add(Vector3.zero);
+                    playerData.currentColors.leftPositions.Add(Vector3.zero);
                 }
             }
 
@@ -797,6 +811,7 @@ public class RubikCubeManager : MonoBehaviour
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
                 playerData.currentColors.frontFaceColors[j] = front[j].GetComponent<Renderer>().material.color;
+                playerData.currentColors.frontPositions[j] = front[j].transform.position;
             }
 
             var back = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
@@ -804,6 +819,7 @@ public class RubikCubeManager : MonoBehaviour
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
                 playerData.currentColors.backFaceColors[j] = back[j].GetComponent<Renderer>().material.color;
+                playerData.currentColors.backPositions[j] = back[j].transform.position;
             }
 
             var up = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
@@ -811,6 +827,7 @@ public class RubikCubeManager : MonoBehaviour
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
                 playerData.currentColors.upFaceColors[j] = up[j].GetComponent<Renderer>().material.color;
+                playerData.currentColors.upPositions[j] = up[j].transform.position;
             }
 
             var down = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
@@ -818,6 +835,7 @@ public class RubikCubeManager : MonoBehaviour
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
                 playerData.currentColors.downFaceColors[j] = down[j].GetComponent<Renderer>().material.color;
+                playerData.currentColors.downPositions[j] = down[j].transform.position;
             }
 
             var right = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
@@ -825,6 +843,7 @@ public class RubikCubeManager : MonoBehaviour
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
                 playerData.currentColors.rightFaceColors[j] = right[j].GetComponent<Renderer>().material.color;
+                playerData.currentColors.rightPositions[j] = right[j].transform.position;
             }
 
             var left = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
@@ -832,6 +851,7 @@ public class RubikCubeManager : MonoBehaviour
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
                 playerData.currentColors.leftFaceColors[j] = left[j].GetComponent<Renderer>().material.color;
+                playerData.currentColors.leftPositions[j] = left[j].transform.position;
             }
         }
     }
@@ -855,42 +875,84 @@ public class RubikCubeManager : MonoBehaviour
 
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
-                front[j].GetComponent<Renderer>().material.color = playerData.currentColors.frontFaceColors[j];
+                for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
+                {
+                    if ((front[j].transform.position - playerData.currentColors.frontPositions[i]).magnitude < 0.01f)
+                    {
+                        front[j].GetComponent<Renderer>().material.color = playerData.currentColors.frontFaceColors[i];
+                        break;
+                    }
+                }
             }
 
             var back = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsBackFace>();
 
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
-                back[j].GetComponent<Renderer>().material.color = playerData.currentColors.backFaceColors[j];
+                for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
+                {
+                    if ((back[j].transform.position - playerData.currentColors.backPositions[i]).magnitude < 0.01f)
+                    {
+                        back[j].GetComponent<Renderer>().material.color = playerData.currentColors.backFaceColors[i];
+                        break;
+                    }
+                }
             }
 
             var up = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsUpFace>();
 
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
-                up[j].GetComponent<Renderer>().material.color = playerData.currentColors.upFaceColors[j];
+                for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
+                {
+                    if ((up[j].transform.position - playerData.currentColors.upPositions[i]).magnitude < 0.01f)
+                    {
+                        up[j].GetComponent<Renderer>().material.color = playerData.currentColors.upFaceColors[i];
+                        break;
+                    }
+                }
             }
 
             var down = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsDownFace>();
 
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
-                down[j].GetComponent<Renderer>().material.color = playerData.currentColors.downFaceColors[j];
+                for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
+                {
+                    if ((down[j].transform.position - playerData.currentColors.downPositions[i]).magnitude < 0.01f)
+                    {
+                        down[j].GetComponent<Renderer>().material.color = playerData.currentColors.downFaceColors[i];
+                        break;
+                    }
+                }
             }
 
             var right = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsRightFace>();
 
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
-                right[j].GetComponent<Renderer>().material.color = playerData.currentColors.rightFaceColors[j];
+                for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
+                {
+                    if ((right[j].transform.position - playerData.currentColors.rightPositions[i]).magnitude < 0.01f)
+                    {
+                        right[j].GetComponent<Renderer>().material.color = playerData.currentColors.rightFaceColors[i];
+                        break;
+                    }
+                }
             }
 
             var left = RubikGenerator.Instance.cubeRoot.GetComponentsInChildren<MarkAsLeftFace>();
 
             for (int j = 0; j < RubikGenerator.Instance.size * RubikGenerator.Instance.size; j++)
             {
-                left[j].GetComponent<Renderer>().material.color = playerData.currentColors.leftFaceColors[j];
+                for (int i = 0; i < RubikGenerator.Instance.size * RubikGenerator.Instance.size; i++)
+                {
+                    if ((left[j].transform.position - playerData.currentColors.leftPositions[i]).magnitude < 0.01f)
+                    {
+                        left[j].GetComponent<Renderer>().material.color = playerData.currentColors.leftFaceColors[i];
+                        break;
+                    }
+                }
             }
         }
     }

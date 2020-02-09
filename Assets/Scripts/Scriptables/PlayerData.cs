@@ -31,6 +31,7 @@ public struct LevelTime
     }
 }
 
+[System.Serializable]
 [CreateAssetMenu(fileName = "New Player Data", menuName = "Game/Player Data")]
 public class PlayerData : ScriptableObject
 {
@@ -73,22 +74,7 @@ public class PlayerData : ScriptableObject
         time = new LevelTime();
         score = "";
         currentColors = new RubikCubeFaceColors();
-    }
-
-    public void SetCubeSizeMode(int mode)
-    {
-        SetCubeSize(mode + minCubeSize);
-    }
-
-    public void SetCubeSizeMode(Dropdown mode)
-    {
-        SetCubeSize(mode.value + minCubeSize);
-    }
-
-    public void SetCubeSize(int size)
-    {
-        cubeSize = size;
-    }
+    }   
 
     public bool CanContinue()
     {

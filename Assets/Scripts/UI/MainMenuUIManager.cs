@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MainMenuUIManager : MonoBehaviour
 {
     public Button continueButton;
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -21,4 +21,9 @@ public class MainMenuUIManager : MonoBehaviour
             continueButton.interactable = true;
         }
     }
+
+    public void SetCubeSizeMode(Dropdown mode)
+    {
+        GameManager.Instance.SetCubeSizeMode(mode);
+    }   
 }

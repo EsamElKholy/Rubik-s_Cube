@@ -43,7 +43,10 @@ public class RubikController : MonoBehaviour
     void Start()
     {
         camera = Camera.main;
-        camera.transform.parent.rotation = Quaternion.identity;
+        if (camera && camera.transform.parent)
+        {
+            camera.transform.parent.rotation = Quaternion.identity;
+        }
     }
 
     // Update is called once per frame
@@ -151,7 +154,7 @@ public class RubikController : MonoBehaviour
         slice.transform.localRotation = rotation;
         rotationLocked = false;
 
-        RubikGenerator.Instance.RotateTiles(axis, currentAxis, direction);
+        RubikRotator.Instance.RotateTiles(axis, direction);
 
         RubikGenerator.Instance.EmptySlice();
 
@@ -159,7 +162,7 @@ public class RubikController : MonoBehaviour
 
         if (!scrambling && rotationCommands.Count > 0)
         {
-            RubikGenerator.Instance.RecordColors(GameManager.Instance.playerData);
+            RubikCubeManager.Instance.RecordColors(GameManager.Instance.playerData);
         }
     }
 
@@ -280,11 +283,16 @@ public class RubikController : MonoBehaviour
             yield return null;
         }
 
-        RubikGenerator.Instance.ResetPosition(RubikGenerator.Instance.cubeRoot.gameObject);
+        RubikRotator.Instance.ResetCube(RubikGenerator.Instance.cubeRoot.gameObject);
 
         if (onWinAnimationFinish)
         {
             onWinAnimationFinish.Raise();
         }
+    }
+
+    public int GetMoveCount()
+    {
+        return rotationCommands.Count;
     }
 }

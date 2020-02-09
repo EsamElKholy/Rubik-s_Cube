@@ -23,12 +23,13 @@ public class InGameUIManager : MonoBehaviour
     [KAI.KAIEvent]
     public KAI.CustomEvent returnToMainMenuEvent;
 
+    private RubikController controller;
     private ConfirmationMode currentConfirmationMode;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        controller = FindObjectOfType<RubikController>();
     }
 
     // Update is called once per frame
@@ -49,6 +50,15 @@ public class InGameUIManager : MonoBehaviour
         if (GameManager.Instance.playerData)
         {
             timer.text = GameManager.Instance.playerData.time.ToString();
+        }
+
+        if (controller.GetMoveCount() > 0)
+        {
+            undo.interactable = true;
+        }
+        else
+        {
+            undo.interactable = false;
         }
     }
 
@@ -80,6 +90,13 @@ public class InGameUIManager : MonoBehaviour
 
     public void OnConfirmation()
     {
+        StartCoroutine(DelayConfirmation(0.3f));
+    }
+
+    private IEnumerator DelayConfirmation(float time)
+    {
+        yield return new WaitForSeconds(time);
+
         switch (currentConfirmationMode)
         {
             case ConfirmationMode.RestartLevel:

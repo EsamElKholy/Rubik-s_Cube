@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public StringVariable mainMenuScene;
     public StringVariable gameScene;
+    private int minCubeSize = 2;
+    private int cubeSize;
 
     private void OnEnable()
     {
@@ -29,12 +33,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        if (!Directory.Exists(Application.persistentDataPath + "/Saves/"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/Saves/");
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         if (AppStartEvent)
         {
+            if (!Directory.Exists(Application.persistentDataPath + "/Saves/"))
+            {
+                Directory.CreateDirectory(Application.persistentDataPath + "/Saves/");
+            }
+
+            Load();
             AppStartEvent.Raise();
+            StartCoroutine(Save());
         }
     }
 
@@ -125,21 +144,23 @@ public class GameManager : MonoBehaviour
                 playerData.WipeOutData();
             }
 
+            playerData.cubeSize = Mathf.Clamp(cubeSize, 2, 6);
             RubikGenerator.Instance.size = playerData.cubeSize;
             RubikGenerator.Instance.GenerateCube();
 
             FindObjectOfType<RubikInput>().ResetCamera();
-            RubikGenerator.Instance.ResetPosition(RubikGenerator.Instance.cubeRoot.gameObject);
+            RubikRotator.Instance.ResetCube(RubikGenerator.Instance.cubeRoot.gameObject);
 
             if (isContinue)
             {
-                RubikGenerator.Instance.SetColors(playerData);
+                RubikCubeManager.Instance.SetColors(playerData);
             }
         }
     }
 
     public void ContinueGame()
     {
+        Load();
         LoadGame();
 
         StartCoroutine(StartGame(true));
@@ -152,5 +173,45 @@ public class GameManager : MonoBehaviour
 #else
          Application.Quit();
 #endif
+    }
+
+    public IEnumerator Save()
+    {
+        while (Application.isPlaying)
+        {
+            if (!File.Exists(Application.persistentDataPath + "/Saves/" + "player.json"))
+            {
+                File.Create(Application.persistentDataPath + "/Saves/" + "player.json");
+            }
+
+            string json = JsonUtility.ToJson(playerData);
+            File.WriteAllText(Application.persistentDataPath + "/Saves/" + "player.json", json);
+
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    public void Load()
+    {
+        if (File.Exists(Application.persistentDataPath + "/Saves/" + "player.json"))
+        {
+            string json = File.ReadAllText(Application.persistentDataPath + "/Saves/" + "player.json");
+            JsonUtility.FromJsonOverwrite(json, playerData);
+        }         
+    }
+
+    private void OnApplicationQuit()
+    {
+        //Save();
+    }
+
+    public void SetCubeSizeMode(Dropdown mode)
+    {
+        SetCubeSize(mode.value + minCubeSize);
+    }
+
+    public void SetCubeSize(int size)
+    {
+        cubeSize = size;
     }
 }

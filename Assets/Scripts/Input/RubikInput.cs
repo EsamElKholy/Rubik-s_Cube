@@ -90,17 +90,16 @@ public class RubikInput : MonoBehaviour
                 touchInput = GetComponent<RubikTouchInput>();
             }
 
-            if (Input.touchCount > 0)
+            if (Application.platform == RuntimePlatform.Android)
             {
                 touchInput.enabled = true;
                 pcInput.enabled = false;
             }
-
-            if (Input.GetMouseButton(0))
+            else
             {
                 touchInput.enabled = false;
                 pcInput.enabled = true;
-            }
+            }          
 
             if (!camera)
             {
@@ -521,6 +520,25 @@ public class RubikInput : MonoBehaviour
 
     public void ResetCamera()
     {
+        if (!camera)
+        {
+            camera = Camera.main;
+        }
+
+        //if (camera && !camera.transform.parent)
+        //{
+        //    var pivot = FindObjectOfType<MarkAsCameraPivot>();
+        //    if (pivot)
+        //    {
+        //        camera.transform.SetParent(pivot.transform);
+        //    }
+
+        //    if (!pivot)
+        //    {
+        //        return;
+        //    }
+        //}
+
         camera.transform.parent.rotation = Quaternion.identity;
         camera.transform.parent.position = Vector3.zero;
 

@@ -76,8 +76,15 @@ namespace KAI
 
         private void OnInspectorUpdate()
         {
-            EditorStyles.helpBox.fontSize = 12;
-            EditorStyles.toolbar.fontSize = 12;
+            if (EditorStyles.helpBox != null)
+            {
+                EditorStyles.helpBox.fontSize = 12;
+            }
+
+            if (EditorStyles.toolbar != null)
+            {
+                EditorStyles.toolbar.fontSize = 12;
+            }
 
             if (gec && pickedEvent)
             {

@@ -846,7 +846,7 @@ public class RubikCubeManager : MonoBehaviour
         {
             if (playerData.currentColors.frontFaceColors.Count == 0 || playerData.currentColors.frontFaceColors.Count > RubikGenerator.Instance.size * RubikGenerator.Instance.size)
             {
-                RecordColors(playerData);
+                //RecordColors(playerData);
 
                 return;
             }

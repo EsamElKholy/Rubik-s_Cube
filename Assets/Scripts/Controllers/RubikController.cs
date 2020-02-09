@@ -160,7 +160,7 @@ public class RubikController : MonoBehaviour
 
         currentAxis = axis;
 
-        if (!scrambling && rotationCommands.Count > 0)
+        if (mode != RotationCommand.CommandType.Auto && rotationCommands.Count > 0)
         {
             RubikCubeManager.Instance.RecordColors(GameManager.Instance.playerData);
         }

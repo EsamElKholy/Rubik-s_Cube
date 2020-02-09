@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
 
             Load();
             AppStartEvent.Raise();
-            StartCoroutine(Save());
+            Save();
         }
     }
 
@@ -115,6 +115,7 @@ public class GameManager : MonoBehaviour
 
                 if (game != null && game.isLoaded)
                 {
+                    Save();
                     SceneManager.UnloadSceneAsync(game);
                 }                
             }
@@ -174,9 +175,8 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    public IEnumerator Save()
+    public void Save()
     {
-        while (Application.isPlaying)
         {
             //if (!File.Exists(Application.persistentDataPath + "/Saves/" + "player.json"))
             //{
@@ -185,8 +185,6 @@ public class GameManager : MonoBehaviour
 
             string json = JsonUtility.ToJson(playerData);
             File.WriteAllText(Application.persistentDataPath + "/Saves/" + "player.json", json);
-
-            yield return new WaitForSeconds(0.5f);
         }
     }
 
@@ -201,7 +199,7 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        //Save();
+        Save();
     }
 
     public void SetCubeSizeMode(Dropdown mode)

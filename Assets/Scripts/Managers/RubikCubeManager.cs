@@ -518,6 +518,80 @@ public class RubikCubeManager : MonoBehaviour
         return res;
     }
 
+    public void RotateSide(List<GameObject> side, float dir)
+    {
+        int size = RubikGenerator.Instance.size;
+
+        List<List<Color>> face = new List<List<Color>>();
+
+        for (int i = 0; i < size; i++)
+        {
+            face.Add(new List<Color>());
+            for (int j = 0; j < size; j++)
+            {
+                face[i].Add(Color.clear);
+            }
+        }
+        int index = 0;
+        for (int j = 0; j < size; j++)
+        {
+            for (int k = 0; k < size; k++)
+            {
+                face[j][k] = side[index].GetComponent<Renderer>().material.color;
+                index++;
+            }
+        }
+
+        var rot = Rotation90(face, dir);
+
+        index = 0;
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                side[index].GetComponent<Renderer>().material.color = rot[i][j];
+                index++;
+            }
+        }
+    }    
+
+    private List<List<Color>> Rotation90(List<List<Color>> arr, float clockwise)
+    {
+        int size = RubikGenerator.Instance.size;
+        List<List<Color>> arr_rotated = new List<List<Color>>();
+
+        for (int i = 0; i < size; i++)
+        {
+            arr_rotated.Add(new List<Color>());
+            for (int j = 0; j < size; j++)
+            {
+                arr_rotated[i].Add(Color.clear);
+            }
+        }
+
+        if (clockwise < 0)
+        {
+            for (var i = 0; i < size; i++)
+            {
+                for (var j = 0; j < arr[i].Count; j++)
+                {
+                    arr_rotated[size - 1 - j][i] = arr[i][j];
+                }
+            }
+        }
+        else
+        {
+            for (var i = 0; i < size; i++)
+            {
+                for (var j = 0; j < size; j++)
+                {
+                    arr_rotated[j][size - 1 - i] = arr[i][j];
+                }
+            }
+        }
+        return arr_rotated;
+    }
+
     /// <summary>
     /// Given a certain slice face get the desired face tiles (i.e: get the up tiles of the front face)
     /// </summary>
@@ -644,11 +718,14 @@ public class RubikCubeManager : MonoBehaviour
 
     private IEnumerator CheckCubeCondition(float delay)
     {
-        while (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
+        while (!solved)
         {
             yield return new WaitForSeconds(delay);
 
-            solved = IsSolved();
+            if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
+            {
+                solved = IsSolved();
+            }
         }
     }
 
@@ -739,7 +816,7 @@ public class RubikCubeManager : MonoBehaviour
         {
             if (!rightFaceCache[i].GetComponent<Renderer>().material.color.Equals(rc))
             {
-                frontSolved = false;
+                rightSolved = false;
             }
         }
 

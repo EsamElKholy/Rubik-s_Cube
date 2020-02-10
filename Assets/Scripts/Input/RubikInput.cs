@@ -212,6 +212,7 @@ public class RubikInput : MonoBehaviour
     {
         if (firstSelectedCube && !firstHitPosition.Equals(lastHitPosition) && !lockDragging)
         {
+            float angle = 90;
             lockDragging = true;
 
             float minScale = Mathf.Min(
@@ -445,7 +446,7 @@ public class RubikInput : MonoBehaviour
 
             rubikController.SetSelectedCube(firstSelectedCube.transform.parent.parent.gameObject);
 
-            rubikController.Rotate(axis, direction * 90, direction, RotationCommand.CommandType.Manual);
+            rubikController.Rotate(axis, direction * angle, direction, RotationCommand.CommandType.Manual);
         }
     }
 

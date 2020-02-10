@@ -38,8 +38,8 @@ public class RubikGenerator : MonoBehaviour
 
     [HideInInspector]
     public List<List<List<Vector3>>> cubesPositions = new List<List<List<Vector3>>>();
-    private List<List<List<GameObject>>> cubes = new List<List<List<GameObject>>>();
-    private List<GameObject> tiles = new List<GameObject>();   
+    [HideInInspector]
+    public List<List<List<GameObject>>> cubes = new List<List<List<GameObject>>>();
 
     private float currentAngle;
 
@@ -132,7 +132,77 @@ public class RubikGenerator : MonoBehaviour
         slice = new GameObject("Slice");
         slice.transform.SetParent(cubeRoot);
 
-        GenerateTiles();      
+        GenerateTiles();
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    cube2D.frontFace.Add(new List<Vector3>());
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.frontFace[i].Add(Vector3.zero);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.frontFace[i][j] = new Vector3(j, i, size - 1);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    cube2D.backFace.Add(new List<Vector3>());
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.backFace[i].Add(Vector3.zero);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.frontFace[i][j] = new Vector3(j, i, 0);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    cube2D.rightFace.Add(new List<Vector3>());
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.rightFace[i].Add(Vector3.zero);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    cube2D.leftFace.Add(new List<Vector3>());
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.leftFace[i].Add(Vector3.zero);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    cube2D.upFace.Add(new List<Vector3>());
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.upFace[i].Add(Vector3.zero);
+        //    }
+        //}
+
+        //for (int i = 0; i < size; i++)
+        //{
+        //    cube2D.downFace.Add(new List<Vector3>());
+        //    for (int j = 0; j < size; j++)
+        //    {
+        //        cube2D.downFace[i].Add(Vector3.zero);
+        //    }
+        //}
     }
 
     public void GenerateCube(int size)

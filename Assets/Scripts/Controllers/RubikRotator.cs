@@ -86,8 +86,6 @@ public class RubikRotator : MonoBehaviour
         /*
          ff => front face
          ffc => front face color
-         flf => left side of front face
-         flfc => color of left side of front face            
          */
 
         switch (axis)
@@ -105,33 +103,26 @@ public class RubikRotator : MonoBehaviour
                             left = true;
                         }
 
-                        var flf = RubikCubeManager.Instance.GetFaceTiles(ff, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var flfc = RubikCubeManager.Instance.GetFaceColors(flf);
-
                         var bf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Back, axis, -direction);
                         var bfc = RubikCubeManager.Instance.GetFaceColors(bf);
-                        var blf = RubikCubeManager.Instance.GetFaceTiles(bf, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var blfc = RubikCubeManager.Instance.GetFaceColors(blf);
 
                         var uf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Up, axis, -direction);
                         var ufc = RubikCubeManager.Instance.GetFaceColors(uf);
-                        var ulf = RubikCubeManager.Instance.GetFaceTiles(uf, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var ulfc = RubikCubeManager.Instance.GetFaceColors(ulf);
 
                         var df = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Down, axis, -direction);
                         var dfc = RubikCubeManager.Instance.GetFaceColors(df);
-                        var dlf = RubikCubeManager.Instance.GetFaceTiles(df, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var dlfc = RubikCubeManager.Instance.GetFaceColors(dlf);
 
                         RubikCubeManager.Instance.SetFaceColors(ff, ufc);
                         RubikCubeManager.Instance.SetFaceColors(uf, bfc);
                         RubikCubeManager.Instance.SetFaceColors(bf, dfc);
                         RubikCubeManager.Instance.SetFaceColors(df, ffc);
 
-                        RubikCubeManager.Instance.SetFaceColors(flf, ulfc);
-                        RubikCubeManager.Instance.SetFaceColors(ulf, blfc);
-                        RubikCubeManager.Instance.SetFaceColors(blf, dlfc);
-                        RubikCubeManager.Instance.SetFaceColors(dlf, flfc);
+                        var side = RubikCubeManager.Instance.GetFaceTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);//RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+
+                        if (side.Count > 0)
+                        {
+                            RubikCubeManager.Instance.RotateSide(side, direction);
+                        }
                     }
                     else
                     {
@@ -144,33 +135,27 @@ public class RubikRotator : MonoBehaviour
                             left = true;
                         }
 
-                        var flf = RubikCubeManager.Instance.GetFaceTiles(ff, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var flfc = RubikCubeManager.Instance.GetFaceColors(flf);
-
                         var bf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Back, axis, -direction);
                         var bfc = RubikCubeManager.Instance.GetFaceColors(bf);
-                        var blf = RubikCubeManager.Instance.GetFaceTiles(bf, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var blfc = RubikCubeManager.Instance.GetFaceColors(blf);
 
                         var uf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Up, axis, -direction);
                         var ufc = RubikCubeManager.Instance.GetFaceColors(uf);
-                        var ulf = RubikCubeManager.Instance.GetFaceTiles(uf, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var ulfc = RubikCubeManager.Instance.GetFaceColors(ulf);
 
                         var df = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Down, axis, -direction);
                         var dfc = RubikCubeManager.Instance.GetFaceColors(df);
-                        var dlf = RubikCubeManager.Instance.GetFaceTiles(df, left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right);
-                        var dlfc = RubikCubeManager.Instance.GetFaceColors(dlf);
 
                         RubikCubeManager.Instance.SetFaceColors(ff, dfc);
                         RubikCubeManager.Instance.SetFaceColors(df, bfc);
                         RubikCubeManager.Instance.SetFaceColors(bf, ufc);
                         RubikCubeManager.Instance.SetFaceColors(uf, ffc);
 
-                        RubikCubeManager.Instance.SetFaceColors(flf, dlfc);
-                        RubikCubeManager.Instance.SetFaceColors(dlf, blfc);
-                        RubikCubeManager.Instance.SetFaceColors(blf, ulfc);
-                        RubikCubeManager.Instance.SetFaceColors(ulf, flfc);
+                        var side = RubikCubeManager.Instance.GetFaceTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);//RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+                                                                                                                                                                 //var side = RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+
+                        if (side.Count > 0)
+                        {
+                            RubikCubeManager.Instance.RotateSide(side, direction);
+                        }
                     }
                 }
                 break;
@@ -187,33 +172,26 @@ public class RubikRotator : MonoBehaviour
                             up = true;
                         }
 
-                        var fuf = RubikCubeManager.Instance.GetFaceTiles(ff, up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down);
-                        var fufc = RubikCubeManager.Instance.GetFaceColors(fuf);
-
                         var bf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Back, axis, -direction);
                         var bfc = RubikCubeManager.Instance.GetFaceColors(bf);
-                        var buf = RubikCubeManager.Instance.GetFaceTiles(bf, up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down);
-                        var bufc = RubikCubeManager.Instance.GetFaceColors(buf);
 
                         var rf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Right, axis, -direction);
                         var rfc = RubikCubeManager.Instance.GetFaceColors(rf);
-                        var ruf = RubikCubeManager.Instance.GetFaceTiles(rf, up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down);
-                        var rufc = RubikCubeManager.Instance.GetFaceColors(ruf);
 
                         var lf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Left, axis, -direction);
                         var lfc = RubikCubeManager.Instance.GetFaceColors(lf);
-                        var luf = RubikCubeManager.Instance.GetFaceTiles(lf, up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down);
-                        var lufc = RubikCubeManager.Instance.GetFaceColors(luf);
 
                         RubikCubeManager.Instance.SetFaceColors(ff, lfc);
                         RubikCubeManager.Instance.SetFaceColors(lf, bfc);
                         RubikCubeManager.Instance.SetFaceColors(bf, rfc);
                         RubikCubeManager.Instance.SetFaceColors(rf, ffc);
 
-                        RubikCubeManager.Instance.SetFaceColors(fuf, lufc);
-                        RubikCubeManager.Instance.SetFaceColors(luf, bufc);
-                        RubikCubeManager.Instance.SetFaceColors(buf, rufc);
-                        RubikCubeManager.Instance.SetFaceColors(ruf, fufc);
+                        var side = RubikCubeManager.Instance.GetFaceTiles(up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down, axis, -direction);//RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+
+                        if (side.Count > 0)
+                        {
+                            RubikCubeManager.Instance.RotateSide(side, -direction);
+                        }
                     }
                     else
                     {
@@ -241,18 +219,19 @@ public class RubikRotator : MonoBehaviour
 
                         var lf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Left, axis, -direction);
                         var lfc = RubikCubeManager.Instance.GetFaceColors(lf);
-                        var luf = RubikCubeManager.Instance.GetFaceTiles(lf, up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down);
-                        var lufc = RubikCubeManager.Instance.GetFaceColors(luf);
 
                         RubikCubeManager.Instance.SetFaceColors(ff, rfc);
                         RubikCubeManager.Instance.SetFaceColors(rf, bfc);
                         RubikCubeManager.Instance.SetFaceColors(bf, lfc);
                         RubikCubeManager.Instance.SetFaceColors(lf, ffc);
 
-                        RubikCubeManager.Instance.SetFaceColors(fuf, rufc);
-                        RubikCubeManager.Instance.SetFaceColors(ruf, bufc);
-                        RubikCubeManager.Instance.SetFaceColors(buf, lufc);
-                        RubikCubeManager.Instance.SetFaceColors(luf, fufc);
+                        var side = RubikCubeManager.Instance.GetFaceTiles(up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down, axis, -direction);//RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+                                                                                                                                                            //var side = RubikCubeManager.Instance.GetSideTiles(up ? RubikCubeFaces.CubeFace.Up : RubikCubeFaces.CubeFace.Down, axis, -direction);
+
+                        if (side.Count > 0)
+                        {
+                            RubikCubeManager.Instance.RotateSide(side, -direction);
+                        }
                     }
                 }
                 break;
@@ -269,33 +248,26 @@ public class RubikRotator : MonoBehaviour
                             front = true;
                         }
 
-                        var uff = RubikCubeManager.Instance.GetFaceTiles(uf, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var uffc = RubikCubeManager.Instance.GetFaceColors(uff);
-
                         var df = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Down, axis, -direction);
                         var dfc = RubikCubeManager.Instance.GetFaceColors(df);
-                        var dff = RubikCubeManager.Instance.GetFaceTiles(df, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var dffc = RubikCubeManager.Instance.GetFaceColors(dff);
 
                         var rf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Right, axis, -direction);
                         var rfc = RubikCubeManager.Instance.GetFaceColors(rf);
-                        var rff = RubikCubeManager.Instance.GetFaceTiles(rf, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var rffc = RubikCubeManager.Instance.GetFaceColors(rff);
 
                         var lf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Left, axis, -direction);
                         var lfc = RubikCubeManager.Instance.GetFaceColors(lf);
-                        var lff = RubikCubeManager.Instance.GetFaceTiles(lf, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var lffc = RubikCubeManager.Instance.GetFaceColors(lff);
 
                         RubikCubeManager.Instance.SetFaceColors(uf, lfc);
                         RubikCubeManager.Instance.SetFaceColors(lf, dfc);
                         RubikCubeManager.Instance.SetFaceColors(df, rfc);
                         RubikCubeManager.Instance.SetFaceColors(rf, ufc);
 
-                        RubikCubeManager.Instance.SetFaceColors(uff, lffc);
-                        RubikCubeManager.Instance.SetFaceColors(lff, dffc);
-                        RubikCubeManager.Instance.SetFaceColors(dff, rffc);
-                        RubikCubeManager.Instance.SetFaceColors(rff, uffc);
+                        var side = RubikCubeManager.Instance.GetFaceTiles(front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back, axis, -direction);//RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+                                                                                                                                                                  // var side = RubikCubeManager.Instance.GetSideTiles(front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back, axis, -direction);
+                        if (side.Count > 0)
+                        {
+                            RubikCubeManager.Instance.RotateSide(side, -direction);
+                        }
                     }
                     else
                     {
@@ -308,33 +280,26 @@ public class RubikRotator : MonoBehaviour
                             front = true;
                         }
 
-                        var uff = RubikCubeManager.Instance.GetFaceTiles(uf, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var uffc = RubikCubeManager.Instance.GetFaceColors(uff);
-
                         var df = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Down, axis, -direction);
                         var dfc = RubikCubeManager.Instance.GetFaceColors(df);
-                        var dff = RubikCubeManager.Instance.GetFaceTiles(df, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var dffc = RubikCubeManager.Instance.GetFaceColors(dff);
 
                         var rf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Right, axis, -direction);
                         var rfc = RubikCubeManager.Instance.GetFaceColors(rf);
-                        var rff = RubikCubeManager.Instance.GetFaceTiles(rf, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var rffc = RubikCubeManager.Instance.GetFaceColors(rff);
 
                         var lf = RubikCubeManager.Instance.GetFaceTiles(RubikCubeFaces.CubeFace.Left, axis, -direction);
                         var lfc = RubikCubeManager.Instance.GetFaceColors(lf);
-                        var lff = RubikCubeManager.Instance.GetFaceTiles(lf, front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back);
-                        var lffc = RubikCubeManager.Instance.GetFaceColors(lff);
 
                         RubikCubeManager.Instance.SetFaceColors(uf, rfc);
                         RubikCubeManager.Instance.SetFaceColors(rf, dfc);
                         RubikCubeManager.Instance.SetFaceColors(df, lfc);
                         RubikCubeManager.Instance.SetFaceColors(lf, ufc);
 
-                        RubikCubeManager.Instance.SetFaceColors(uff, rffc);
-                        RubikCubeManager.Instance.SetFaceColors(rff, dffc);
-                        RubikCubeManager.Instance.SetFaceColors(dff, lffc);
-                        RubikCubeManager.Instance.SetFaceColors(lff, uffc);
+                        var side = RubikCubeManager.Instance.GetFaceTiles(front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back, axis, -direction);//RubikCubeManager.Instance.GetSideTiles(left ? RubikCubeFaces.CubeFace.Left : RubikCubeFaces.CubeFace.Right, axis, -direction);
+                                                                                                                                                                  // var side = RubikCubeManager.Instance.GetSideTiles(front ? RubikCubeFaces.CubeFace.Front : RubikCubeFaces.CubeFace.Back, axis, -direction);
+                        if (side.Count > 0)
+                        {
+                            RubikCubeManager.Instance.RotateSide(side, -direction);
+                        }
                     }
                 }
                 break;

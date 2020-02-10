@@ -17,6 +17,7 @@ public class InGameUIManager : MonoBehaviour
     public Text congratulationTimer;
     public Button undo;
     public Button pause;
+    public Button solve;
 
     [KAI.KAIEvent]
     public KAI.CustomEvent restartLevelEvent;
@@ -38,12 +39,14 @@ public class InGameUIManager : MonoBehaviour
         if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.GameSetup)
         {
             undo.interactable = false;
+            solve.interactable = false;
             pause.interactable = false;
         }
 
         if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame)
         {
             undo.interactable = true;
+            solve.interactable = true;
             pause.interactable = true;
         }
 
@@ -52,13 +55,22 @@ public class InGameUIManager : MonoBehaviour
             timer.text = GameManager.Instance.playerData.time.ToString();
         }
 
-        if (controller.GetMoveCount() > 0)
+        if (controller.GetMoveCount() > 0 && controller.CanRotate())
         {
             undo.interactable = true;
         }
         else
         {
             undo.interactable = false;
+        }
+
+        if (GameManager.Instance.globalGameState.GetCurrentGameState() == GameState.InGame && controller.IsSolving() == false)
+        {
+            solve.interactable = true;
+        }
+        else
+        {
+            solve.interactable = false;
         }
     }
 
@@ -122,6 +134,6 @@ public class InGameUIManager : MonoBehaviour
 
     public void OnWin()
     {
-        congratulationTimer.text = "Timer: " + GameManager.Instance.playerData.time.ToString();
+        congratulationTimer.text = "Time: " + GameManager.Instance.playerData.time.ToString();
     }
 }

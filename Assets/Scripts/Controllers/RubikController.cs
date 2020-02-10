@@ -35,9 +35,12 @@ public class RubikController : MonoBehaviour
     [HideInInspector]
     public bool scrambling = false;
 
+    private bool solving;
+
     private Camera camera;
 
     private Stack<RotationCommand> rotationCommands = new Stack<RotationCommand>();
+    private Stack<RotationCommand> allRotationCommands = new Stack<RotationCommand>();
 
     // Start is called before the first frame update
     void Start()
@@ -81,8 +84,9 @@ public class RubikController : MonoBehaviour
             if (rotationType == RotationCommand.CommandType.Manual)
             {
                 rotationCommands.Push(command);
+                allRotationCommands.Push(command);
             }
-
+            
             rotationLocked = true;
 
             var slice = RubikGenerator.Instance.GetSlice(axis);
@@ -192,19 +196,20 @@ public class RubikController : MonoBehaviour
         if (!scrambling)
         {
             scrambling = true;
-            StartCoroutine(AutoRotate(4, 0.3f));
+            StartCoroutine(AutoRotate(4, 0.15f));
         }
     }
 
     private IEnumerator AutoRotate(float time, float timeForEachRotation)
     {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.5f);
 
         int numOfRotations = Mathf.CeilToInt(time / timeForEachRotation);
 
         for (int i = 0; i < numOfRotations; i++)
         {
             var command = GenerateRotationCommand();
+            allRotationCommands.Push(command);
             SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
             Rotate(command.axis, command.angle, command.direction, RotationCommand.CommandType.Auto, timeForEachRotation);
 
@@ -224,13 +229,44 @@ public class RubikController : MonoBehaviour
 
     public void UndoRotation()
     {
-        if (rotationCommands.Count > 0)
+        if (rotationCommands.Count > 0 && !rotationLocked)
         {
+            //RubikCubeManager.Instance.RecordColors(GameManager.Instance.playerData);
             var command = rotationCommands.Pop();
 
             SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
             Rotate(command.axis, -command.angle, -command.direction, RotationCommand.CommandType.Auto);
+            //RubikCubeManager.Instance.SetColors(GameManager.Instance.playerData);
         }
+    }
+
+    public void OnUndoAll()
+    {
+        if (!solving)
+        {
+            solving = true;
+            StartCoroutine(UndoAll());
+        }
+    }
+
+    IEnumerator UndoAll()
+    {
+        while (allRotationCommands.Count > 0)
+        {
+            while (rotationLocked)
+            {
+                yield return null;
+            }
+
+            var command = allRotationCommands.Pop();
+
+            SetSelectedCube(command.xIndex, command.yIndex, command.zIndex);
+            Rotate(command.axis, -command.angle, -command.direction, RotationCommand.CommandType.Auto, 0.2f);
+
+            yield return null;
+        }
+
+        solving = false;
     }
 
     public void SetSelectedCube(GameObject cube)
@@ -294,5 +330,15 @@ public class RubikController : MonoBehaviour
     public int GetMoveCount()
     {
         return rotationCommands.Count;
+    }
+
+    public bool CanRotate()
+    {
+        return !rotationLocked;
+    }
+
+    public bool IsSolving()
+    {
+        return solving;
     }
 }
